@@ -3,6 +3,7 @@ class K_Array {
     private $arr;
     
     public function K_Array ($vars) {
+        $this->arr = array();
         @$this->copyVars($this->arr, $vars);
     }
     
@@ -30,7 +31,7 @@ class K_Input {
         $this->server  = new K_Array($_SERVER);
         $this->get     = new K_Array($_GET);
         $this->post    = new K_Array($_POST);
-        $this->file    = new K_Array($_FILE);
+        $this->file    = new K_Array($_FILES);
         $this->request = new K_Array($_REQUEST);
     }
     

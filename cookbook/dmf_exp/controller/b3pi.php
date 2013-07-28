@@ -19,7 +19,7 @@ class b3pi extends K_Controller {
 	
 	public function msg()
 	{
-        die('<msg/>');
+        die('<msg><item bgcolor="#CCCCCC"><![CDATA[<font color="#bbbbbb">TDGBLS</font>]]></item></msg>');
 	}
 	
 	public function cloudfilter()

@@ -72,7 +72,7 @@ class XMLConverter
 		return simplexml_load_string($XMLString);
 	}
     
-	public static function FromIDForamt(SimpleXMLElement $Obj)
+	public static function FromIDFormat(SimpleXMLElement $Obj)
 	{
 		$XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
 		foreach ($Obj->d as $comment) {

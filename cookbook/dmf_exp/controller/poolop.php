@@ -9,6 +9,7 @@ class PoolOp extends K_Controller {
         
     public function PoolOp() {
         $this->Helper("danmakuPool");
+        parent::__construct();
     }
     
 	public function clear($group, $dmid, $pool)
@@ -69,6 +70,7 @@ class PoolOp extends K_Controller {
 	
 	public function post($group, $dmid) // GET : pool append
 	{
+        
         if (!XmlAuth($group, $dmid, XmlAuth::edit)) {
             Utils::WriteLog('PoolOp::post()', "{$group} :: {$dmid} :: 权限不足");
             return;
@@ -90,13 +92,12 @@ class PoolOp extends K_Controller {
 		}
 		
         $pool = GetPool($group, $dmid, StrToPool($this->Input->Post->Pool));
-        
 		$gc = Utils::GetGroupConfig($group);
 		$xmldata = $gc->UploadFilePreProcess(file_get_contents($this->Input->File->uploadfile['tmp_name']));
 		$XMLObj = XMLConverter::ToUniXML($xmldata);
 		unset($xmldata);
 		
-		$append = strtolower($this->Input->Get->append) == 'true' ;
+		$append = strtolower($this->Input->Post->Append) == 'true' ;
 		if ($append) {
 			$pool->MergeFrom($XMLObj);
 		} else {

@@ -70,6 +70,12 @@ class DanmakuPoolBase
 		$pool->Clear();
 	}
 	
+	public function MergeFrom(SimpleXMLElement $xml2)
+	{
+        if (!$this->loaded) $this->load();
+		$this->Merge($xml2);
+	}
+	
 	public function Dispose()
 	{
 		unset($this->XMLObj);

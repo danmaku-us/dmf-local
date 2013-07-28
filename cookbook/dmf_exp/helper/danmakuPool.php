@@ -3,11 +3,14 @@
 //$this->Helper("danmakuPool");
 function GetPool($group, $dmid, $pool) {
     $group = Utils::GetGroup($group);
-    if ($group === FALSE) return false;
+    if ($group === FALSE) {
+        Utils::WriteLog('danmakuPool#GetPool()', "{$group} :: {$dmid} ::{$pool}:: 找不到指定组");
+        return false;
+    }
     return new DanmakuPoolBase($group, $dmid, $pool, LoadMode::lazy);
 }
 
-//��������
+//基本无用
 function StrToPool($str) {
     switch (strtolower($str)) {
         case "static"  :
@@ -17,6 +20,7 @@ function StrToPool($str) {
         case "all"     :
             return PoolMode::A;
         default        :
+            Utils::WriteLog('danmakuPool#StrToPool()', "找不到指定弹幕池{$str}");
             die($str);//Fix me
     }
 }

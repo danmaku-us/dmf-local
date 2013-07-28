@@ -73,7 +73,7 @@ class Utils
             array("twodland1", "Twodland1"),
             array("acfun1n",   "AcfunN1"),
             array("acfunn1",   "AcfunN1"),
-            array("acfun",     "Acfun2"), // 标准化后删除
+            array("acfun",     "Acfun2"), // 鏍囧噯鍖栧悗鍒犻櫎
         );
         reset($Mapping);
         while( list(, list($from, $to)) = each($Mapping) ) {

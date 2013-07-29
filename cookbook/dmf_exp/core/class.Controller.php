@@ -32,7 +32,7 @@ class K_Controller {
     }
     
     protected function DisplayStatic($name) {
-        $p = MVC_PATH."/static/{$file}";
+        $p = MVC_PATH."/static/{$name}";
         if (file_exists($p)) {
             include($p);
         } else {

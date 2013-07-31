@@ -159,10 +159,9 @@ $ACFUN2011 = TRUE;
 $BILIBILI = TRUE;
 $TWODLAND = TRUE;
 $CheckPerfs = FALSE;
-$EnableAutoTimeShift = TRUE;
 $EnableSysLog = TRUE;
-//$TimeShiftDelta = 0.000001;
-//$TimeShiftThreshold = 10 * 60; //两次弹幕发送间隔超过阈值后重置漂移。
+$EnableAutoTimeShift = TRUE;
+$TimeShiftDelta = 0.0001;
 
 //权限设定
 $HandleAuth['xmlread'] = 'read';
@@ -173,7 +172,8 @@ if ($LOCALVERSION) {
 } else {
 	$HandleAuth['dmpost'] = 'admin`';
 }
-$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,qule.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,pdm-bili.js"></script>'."\n";
+//$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,qule.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,pdm-bili.js"></script>'."\n";
+$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,jq.bilibili.js,page.arc.js"></script>'."\n";
 
 
 //处理投稿请求

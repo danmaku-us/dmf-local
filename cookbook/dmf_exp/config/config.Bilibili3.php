@@ -11,8 +11,7 @@ class Bilibili3GroupConfig extends GroupConfig
         $this->AllowedXMLFormat = array('d', 'data', 'raw');
         $this->SUID = '3B';
         $this->XMLFolderPath = './uploads/Bilibili3';
-        $this->PlayersSet->add('bi20130124', new Player('bi20130124.swf', 'bilibili播放器(2013-01-24)', 950, 482))
-                         ->addDefault('bi20130124');
+        $this->PlayersSet->Load($this->GroupString);
         $this->VideoSourceSet->add('yk', new YouKuSource());
     }
     

@@ -11,11 +11,7 @@ class Bilibili2GroupConfig extends GroupConfig
         $this->AllowedXMLFormat = array('d', 'data', 'raw');
         $this->SUID = 'B';
         $this->XMLFolderPath = './uploads/Bilibili2';
-        $this->PlayersSet->add('bi20120427', new Player('bi20120427_DMF.swf', 'bilibili播放器(2012-04-27)', 950, 482))
-                         ->add('bi20121024', new Player('bi20121024.swf', 'bilibili播放器(2012-10-24_org)', 950, 482))
-                         ->add('bi20121203', new Player('bi20121203.swf', 'bilibili播放器(2012-12-03_org)', 950, 482))
-                         ->add('bi20121226', new Player('bi20121226.swf', 'bilibili播放器(2012-12-26_org)', 950, 482))
-                         ->addDefault('bi20121226');
+        $this->PlayersSet->Load($this->GroupString);
         $this->VideoSourceSet->add('yk', new YouKuSource());
     }
     

@@ -9,10 +9,7 @@ class AcfunN1GroupConfig extends GroupConfig
         $this->AllowedXMLFormat = array('json', 'raw', 'data');
         $this->SUID = 'AN';
         $this->XMLFolderPath = './uploads/AcfunN1';
-        $this->PlayersSet
-                    ->add('ac20111115', new Player('ac20111115.swf', 'Acfun播放器 (20111116)', 950, 432)) 
-                    ->add('ac20120304', new Player('ac20120304.swf', 'Acfun播放器 (20120304)', 950, 445))
-                    ->addDefault('ac20120304');
+        $this->PlayersSet->Load($this->GroupString);
     }
 
     public function UploadFilePreProcess($str) {

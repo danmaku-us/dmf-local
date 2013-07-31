@@ -7,8 +7,8 @@ class Player
 	private $height;// 像素
 	private $Invisible = TRUE;
 	
-	public static $playerBase = 'http://danmaku.us/static/players/';
-	
+    public static $playerBase = '';
+    
 	public function __construct($fileName, $desc, $width, $height, $Invisible = TRUE)
 	{
 		$this->playerUrl = self::$playerBase.$fileName;

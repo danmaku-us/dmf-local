@@ -9,13 +9,7 @@ class Acfun2GroupConfig extends GroupConfig
         $this->AllowedXMLFormat = array('data', 'raw');
         $this->SUID = 'A';
         $this->XMLFolderPath = './uploads/Acfun2';
-        $this->PlayersSet
-                    ->add('mukio', new Player('mukioplayer.swf', 'MukioPlayer (1.36web)', 950, 432))
-                    ->add('acold09', new Player('player1_09.swf', 'Acfun播放器 (20090803)', 950, 432))
-                    ->add('acold', new Player('player1_old.swf', 'Acfun播放器 (2010502)', 950, 432))
-                    ->add('acnew', new Player('player1_new.swf', 'Acfun播放器 (2010711)', 950, 432))
-                    ->add('ac20110209', new Player('player1_20110209.swf', 'Acfun播放器 (20110209)', 950, 432))
-                    ->addDefault('mukio');
+        $this->PlayersSet->Load($this->GroupString);
     }
     
     public function UploadFilePreProcess($str) {

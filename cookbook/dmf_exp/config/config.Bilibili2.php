@@ -54,7 +54,7 @@ class Bilibili2GroupConfig extends GroupConfig
 				assert(false);
 	        break;
 	    }
-		return $AFVArray;
+		return $playerParams;
 	}
 	
     public function __get($name) {

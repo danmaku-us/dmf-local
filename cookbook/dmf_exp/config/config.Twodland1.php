@@ -17,10 +17,11 @@ class Twodland1GroupConfig extends GroupConfig
     }
     
 	public function GenerateFlashVarArr(VideoPageData $vdp)
-	{
-		$AFVArray = array();
-		$AFVArray['dir'] = strtoupper($vdp->VideoType->getType());
-		$AFVArray['vid'] = $vdp->DanmakuId;
+	{   
+        $p = $vdp->Player;
+        $playerParams = new FlashParams($p->playerUrl, $p->width, $p->height);
+        $playerParams->addVar('vid', $source->DanmakuId);
+        $playerParams->addVar('dir',strtoupper($vdp->VideoType->getType()));
         
         if (strtoupper($vdp->VideoType->getType()) == "NOR") {
             $type = 'sina';
@@ -40,7 +41,7 @@ class Twodland1GroupConfig extends GroupConfig
 CONT;
         $targetFile = './static/page/'.md5($vdp->DanmakuId).'.xml';
         file_put_contents($targetFile, $contents, LOCK_EX);
-		return $AFVArray;
+		return $playerParams;
 	}
 	
     public function __get($name) {

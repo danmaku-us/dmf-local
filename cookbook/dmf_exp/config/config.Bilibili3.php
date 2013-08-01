@@ -57,14 +57,4 @@ class Bilibili3GroupConfig extends GroupConfig
         return $this->$name;
     }
     
-    public static function GetInstance()
-    {
-        if (is_null(self::$Inst)) {
-            self::$Inst = new self();
-            return self::$Inst;
-        } else {
-            return self::$Inst;
-        }
-    }
-    
 }

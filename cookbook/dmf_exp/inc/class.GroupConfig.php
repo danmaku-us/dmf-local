@@ -10,8 +10,7 @@ abstract class GroupConfig
     //×Ô¶¯ÉèÖÃ
 	protected $VideoSourceSet;
 	protected $PlayersSet;
-    protected static $Inst;
-    
+
     protected function __construct() {
         $this->VideoSourceSet = new VideoSourceSet();
         $this->VideoSourceSet
@@ -29,5 +28,17 @@ abstract class GroupConfig
     }
     
     public abstract function GenerateFlashVarArr(VideoPageData $vdp);
+    
+    public static function GetInstance()
+    {
+        static $instances = array();
+        
+        $calledClass = get_called_class();
+        if (!isset($instances[$calledClass]))
+        {
+            $instances[$calledClass] = new $calledClass();
+        }
+        return $instances[$calledClass];
+    }
     
 }

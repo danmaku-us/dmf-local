@@ -1,7 +1,7 @@
 <?php if (!defined('PmWiki')) exit();
 class Acfun4pGroupConfig extends GroupConfig
 {
-    
+
     protected function __construct()
     {
         parent::__construct();
@@ -9,7 +9,7 @@ class Acfun4pGroupConfig extends GroupConfig
         $this->AllowedXMLFormat = array('json', 'raw', 'data');
         $this->SUID = 'A4P';
         $this->XMLFolderPath = './uploads/Acfun4p';
-        $$this->PlayersSet->Load($this->GroupString);
+        $this->PlayersSet->Load($this->GroupString);
     }
 
     public function UploadFilePreProcess($str) {
@@ -78,16 +78,6 @@ class Acfun4pGroupConfig extends GroupConfig
 	    
     public function __get($name) {
         return $this->$name;
-    }
-    
-    public static function GetInstance()
-    {
-        if (is_null(self::$Inst)) {
-            self::$Inst = new self();
-            return self::$Inst;
-        } else {
-            return self::$Inst;
-        }
     }
     
 }

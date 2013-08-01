@@ -16,8 +16,7 @@ class PlayerSet extends Set
     
     public function Load(/* groupstring*/ $gs)
     {
-        global $FarmD;
-        $dir = "{$FarmD}/pub/players/$gs";
+        $dir = self::GetPlayerDir($gs);
         $pattern = "{$dir}/*.json";
         foreach (glob($pattern) as $file) {
             $j = json_decode(file_get_contents($file));
@@ -47,6 +46,12 @@ class PlayerSet extends Set
 	protected function isVaildType($Obj)
 	{
 		return $Obj instanceof Player;
+	}
+	
+	public static function GetPlayerDir($gs)
+	{
+        global $FarmD;
+        return "{$FarmD}/pub/players/$gs";
 	}
 }
 

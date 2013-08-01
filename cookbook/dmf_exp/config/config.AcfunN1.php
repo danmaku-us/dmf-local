@@ -1,7 +1,7 @@
 <?php if (!defined('PmWiki')) exit();
 class AcfunN1GroupConfig extends GroupConfig
 {
-    
+
     protected function __construct()
     {
         parent::__construct();
@@ -79,16 +79,6 @@ class AcfunN1GroupConfig extends GroupConfig
 	
     public function __get($name) {
         return $this->$name;
-    }
-    
-    public static function GetInstance()
-    {
-        if (is_null(self::$Inst)) {
-            self::$Inst = new self();
-            return self::$Inst;
-        } else {
-            return self::$Inst;
-        }
     }
     
 }

@@ -42,9 +42,9 @@ function HandleConfigUpdate($pagename, $auth) {
         $group    = @$groups[strtolower($group)];
         if (is_null($group)) break;
         if ($group->$playerid === false) break;
-        $jsonfile = PlayerSet::GetPlayerDir($group)."/default.json";
+        $jsonfile = PlayerSet::GetPlayerDir($group->GroupString)."/default.json";
         file_put_contents($jsonfile, json_encode(array("playerid" => $playerid)));
-        exit;
-        
     }
+    $GLOBALS['MessagesFmt'] = '配置已保存';
+    HandleBrowse($pagename);
 }

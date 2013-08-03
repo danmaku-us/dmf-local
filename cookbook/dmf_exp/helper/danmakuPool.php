@@ -1,6 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
 
-//$this->Helper("danmakuPool");
 function GetPool($group, $dmid, $pool) {
     $group = Utils::GetGroup($group);
     if ($group === FALSE) {
@@ -39,13 +38,3 @@ function XmlAuth($group, $dmid, $auth) {
             break;
     }
 }
-
-
-
-
-
-
-
-
-
-

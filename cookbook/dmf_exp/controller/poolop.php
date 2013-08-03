@@ -47,25 +47,62 @@ class PoolOp extends K_Controller {
 	}
 	
 	
-	public function loadxml($group, $dmid) // GET : format attach
+	public function loadxml($group, $dmid) // GET : format attach split
 	{
+        
         $gc = Utils::GetGroupConfig($group);
-		//header("Content-type: text/xml");
-		header("Content-type: text/plain");
-		if ($_GET['attach'] == 'true') {
-			header("Content-disposition: ".
-				"attachment; filename=\"".$group."_$dmid".".xml\"");
-		}
 
 		$staPool = GetPool($group, $dmid, PoolMode::S);
 		$dynPool = GetPool($group, $dmid, PoolMode::D);
-        
-        $staPool->MoveFrom($dynPool);
 		
-		$format = is_null($_GET['format']) ? $gc->AllowedXMLFormat[0] : $_GET['format'] ;
-		$view = sprintf( "xml_view_%s", strtolower($format));
-		// 不做保存，纯粹合并
-        $this->DisplayView($view, array('Obj' => $staPool->GetXML()) );
+        $staPool->MoveFrom($dynPool);
+        $XML = $staPool->GetXML();
+        unset($staPool);
+		unset($dynPool);
+		
+		$format = is_null($_GET['format']) ? $gc->AllowedXMLFormat[0] : $_GET['format'];
+		$format = strtolower($format);
+		$chunksize = intval($_GET['split']);
+		$attach = ($_GET['attach'] == 'true');
+		$fileExt = ($format == 'json') ? "json" : "xml";
+		
+		$GetString = function (SimpleXMLElement $XML) use ($format) {
+            if ($format == 'json') {
+                return XMLConverter::ToJsonFormat($XML);
+            } else {
+                return XMLConverter::FromUniXML($format, $XML)->asXML();
+            }
+        };
+		
+        if ($chunksize == 0) {
+            header("Content-type: text/plain");
+            if ($attach) {
+                header("Content-disposition: attachment; filename=\"{$group}_{$dmid}_{$format}.{$fileExt}\"");
+            }
+            echo $GetString($XML);
+        } else {
+            header("Content-type: application/octet-stream");
+            header("Content-disposition: attachment; filename=\"{$group}_{$dmid}_{$format}_{$chunksize}.zip\"");
+            $tempfile = tempnam(sys_get_temp_dir(), 'DMF');
+            $zip = new ZipArchive();
+            if ($zip->open($tempfile, ZipArchive::CREATE)!==TRUE) {
+                exit("cannot open zip file <$filename>\n");
+            }
+            $chunks = array_chunk($XML->xpath('//comment'), $chunksize);
+            unset($XML);
+            foreach ( $chunks as $idx => $chunk ) {
+                $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
+                foreach ($chunk as $item) {
+                    $XMLString .= $item->asXML();
+                }
+                $XMLString .= '</comments>';
+                $zip->addFromString("{$group}_{$dmid}_{$idx}.{$fileExt}", $GetString(simplexml_load_string($XMLString)));
+            }
+            $zip->Close();
+            readfile($tempfile);
+            unlink($tempfile);
+        }
+		
 	}
 	
 	public function post($group, $dmid) // GET : pool append

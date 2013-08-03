@@ -61,7 +61,16 @@ IsMuti
                     <!-- BEGIN: Format -->
                     <option value='{FORMAT}'>{FORMAT}</option>
                     <!-- END: Format -->
-                </select>附件：<input checked='checked' name='attach' type='checkbox' value='true' /><input class='inputbutton' type='submit' value='下载' />
+                </select>
+                分割：
+                <select class='inputbox' name='split'>
+                    <option value='0'>无限</option>
+                    <option value='199'>199 </option>
+                    <option value='500'>500 </option>
+                    <option value='1000'>1000</option>
+                </select>
+                附件：<input checked='checked' name='attach' type='checkbox' value='true' />
+                <input class='inputbutton' type='submit' value='下载' />
             </form>&nbsp;&nbsp;
             <!-- END: Download -->
             <!-- BEGIN: NewLine--> <br /> <!-- END: NewLine-->

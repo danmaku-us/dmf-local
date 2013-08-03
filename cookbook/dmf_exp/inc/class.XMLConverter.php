@@ -2,17 +2,149 @@
 
 class XMLConverter
 {
-    //unused
-    public static function FromUniXML(SimpleXMLElement $xml, $format) {
-    
+    public static function FromUniXML($format, SimpleXMLElement $xml) {
+        switch (strtolower($format)) {
+            case "raw":
+                return $xml;
+            case "comments":
+                //此处为2dland用的comments格式
+                return self::ToCommentsFormat($xml);
+            case "data":
+                return self::ToDataFormat($xml);
+            //case "c":
+            //    return self::ToCLFormat($xml);
+            case "d":
+                return self::ToIDFormat($xml);
+            case "json":
+                //为了方便，直接返回Uni格式。转换到json的步骤由独立代码进行
+                return $xml;
+			default:
+				throw new UnexpectedValueException("Can't find corresponding format coverter.");
+        }
     }
+    
+    public static function ToCommentsFormat(SimpleXMLElement $xml) {
+        $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
+        foreach ($xml->comment as $node) {
+            $attr = $node->attr[0]->attributes();
+            $nodeA = $node->attributes();
+            
+            $attrs = array();
+            $pt = $attr['playtime'];
+            $mode = $attr['mode'];
+            $fontsize = $attr['fontsize'];
+            $color = $attr['color'];
+            $SE = $attr['showeffect'];
+            $HE = $attr['hideeffect'];
+            $FE = $attr['fonteffect'];
+            $sendtime = $nodeA['sendtime'];
+            
+            $usText = $node->text;
+            $text = htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
+            $XMLString .= <<<CMT
+
+    <comment mode="$mode" showEffect="$SE" hideEffect="$HE" fontEffect="$FE" isLocked="-1" fontSize="$fontsize" color="$color">
+        <playTime>$pt</playTime>
+        <message>$text</message>
+        <sendTime>$sendtime</sendTime>
+    </comment>
+CMT;
+        }
+        $XMLString .= "\r\n</comments>";
+        return simplexml_load_string($XMLString);
+    }
+    
+    public static function ToDataFormat(SimpleXMLElement $xml) {
+        $XMLString = '<?xml version="1.0" encoding="utf-8"?><information>';
+        foreach ($xml->comment as $node) {
+            $attr = $node->attr[0]->attributes();
+            $nodeA = $node->attributes();
+            
+            $attrs = array();
+            $pt = $attr['playtime'];
+            $mode = $attr['mode'];
+            $fontsize = $attr['fontsize'];
+            $color = $attr['color'];
+            $sendtime = $nodeA['sendtime'];
+            
+            $usText = $node->text;
+            $pString = implode(",", $attrs);
+            $text .= htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
+            $XMLString .= <<<CMT
+
+  <data>
+    <playTime>$pt</playTime>
+    <message fontsize="$fontsize" color="$color" mode="$mode">$text</message>
+    <times>$sendtime</times>
+  </data>
+CMT;
+        }
+        $XMLString .= "\r\n</information>";
+        return simplexml_load_string($XMLString);
+    }
+    
+    //unused
+    public static function ToCLFormat(SimpleXMLElement $xml) {
+        
+    }
+    
+    public static function ToJsonFormat(SimpleXMLElement $xml) {
+        $json = array();
+        foreach ($xml->comment as $node) {
+            $attr = $node->attr[0]->attributes();
+            $nodeA = $node->attributes();
+            $attrs = array();
+            $attrs[] = $attr['playtime'];
+            $attrs[] = $attr['color'];
+            $attrs[] = $attr['mode'];
+            $attrs[] = $attr['fontsize'];
+            $attrs[] = $nodeA['userhash'];
+            $attrs[] = $nodeA['sendtime'];
+            
+            $usText = $node->text;
+            $pString = implode(",", $attrs);
+            $text = htmlspecialchars($usText, ENT_NOQUOTES, "UTF-8");
+            $text = strtr($text , "\n", "\r");
+            $json[] = (object)array('c' => $pString, 'm' => $text);
+        }
+        if (!empty($json)) {
+            return json_encode($json);
+        } else {
+            return '[]';
+        }
+    }
+    
+    public static function ToIDFormat(SimpleXMLElement $xml) {
+        $XMLString = '<?xml version="1.0" encoding="UTF-8"?><i>';
+        foreach ($xml->comment as $node) {
+            $attr = $node->attr[0]->attributes();
+            $nodeA = $node->attributes();
+            
+            $attrs = array();
+            $attrs[] = $attr['playtime'];
+            $attrs[] = $attr['mode'];
+            $attrs[] = $attr['fontsize'];
+            $attrs[] = $attr['color'];
+            $attrs[] = $nodeA['sendtime'];
+            $attrs[] = $nodeA['poolid'];
+            $attrs[] = $nodeA['userhash'];
+            $attrs[] = $nodeA['id'];
+            
+            $usText = $node->text;
+            $pString = implode(",", $attrs);
+            $text = htmlspecialchars($usText, ENT_NOQUOTES, "UTF-8");
+            $XMLString .= "\r\n<d p=\"$pString\">$text</d>";
+        }
+        $XMLString .= "\r\n</i>";
+        return simplexml_load_string($XMLString);
+    }
+    
     
     // SimpleXMLElement -> SimpleXMLElement
     public static function ToUniXML(SimpleXMLElement $xml) {
         switch (strtolower($xml->getName())) {
             case "comments":
                 //因为2dland根节点和目前DMF一样
-                //是内部格式
                 if (empty($xml->comment[0]->playTime)) {
                     return $obj;
                 } else {

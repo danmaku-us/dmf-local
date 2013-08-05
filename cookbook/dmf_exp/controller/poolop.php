@@ -177,7 +177,7 @@ class PoolOp extends K_Controller {
         }
 		$errorStr = "";
 		foreach ($errors as $error) {
-			$errorStr .= display_xml_error($errors);
+			$errorStr .= Utils::display_xml_error($error);
 		}
 		
 		$this->display($errorStr);

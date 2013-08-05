@@ -1,12 +1,12 @@
 <?php if (!defined('PmWiki')) exit();
 
-function GetPool($group, $dmid, $pool) {
+function GetPool($group, $dmid, $pool, $loadMode = LoadMode::lazy) {
     $group = Utils::GetGroup($group);
     if ($group === FALSE) {
         Utils::WriteLog('danmakuPool#GetPool()', "{$group} :: {$dmid} ::{$pool}:: 找不到指定组");
         return false;
     }
-    return new DanmakuPoolBase($group, $dmid, $pool, LoadMode::lazy);
+    return new DanmakuPoolBase($group, $dmid, $pool, $loadMode);
 }
 
 //基本无用

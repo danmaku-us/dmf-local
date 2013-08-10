@@ -40,7 +40,6 @@ class b3pi extends K_Controller {
 	public function dad()
 	{
         global $BilibiliAuthLevel;
-        $this->Helper("danmakuPool");
         $data = array();
         if (empty($this->Input->Request->id)) {
             $data['ChatId'] = $this->Input->Request->id;
@@ -48,7 +47,7 @@ class b3pi extends K_Controller {
             $data['ChatId'] = 0;
         }
         
-        if (XmlAuth('Bilibili3', $this->Input->Request->id, XmlAuth::edit)) {
+        if (XmlAuth::IsEdit('Bilibili3', $this->Input->Request->id)) {
             $data['AuthLevelString'] = $BilibiliAuthLevel->Danmakuer;
         } else {
             $data['AuthLevelString'] = $BilibiliAuthLevel->DefaultLevel;
@@ -98,8 +97,6 @@ class b3pi extends K_Controller {
 	
 	public function dmpost()
 	{
-        $this->Helper("playerInterface");
-        
         if ($this->requireVars(
                 $this->Input->Post,
                 array("date", "playTime", "mode", "fontsize", "color", "pool", "message"))) {
@@ -115,7 +112,7 @@ class b3pi extends K_Controller {
                 'color'     => $this->Input->Post->color);
 		$builder->AddAttr($attrs);
 		
-        if (cmtSave($this->GroupConfig, $this->Input->Post->cid, $builder)) {
+        if (PoolUtils::AppendToDynamicPool($this->GroupConfig, $this->Input->Post->cid, $builder)) {
             echo mt_rand();
         } else {
             die("-55");
@@ -127,26 +124,7 @@ class b3pi extends K_Controller {
     
     
 	public function update_comment_time()
-	{   
-        
-        
-        $targetTime = intval($this->Input->Request->time);
-        $dmid = intval($this->Input->Request->dmid);
-        $poolId = intval($this->Input->Request->cid);
-        if (is_null($poolId)) die("2");
-        
-        $dynPool = GetPool('Bilibili3', $poolId, PoolMode::D);
-        $query = new DanmakuXPathBuilder();
-        $result = $dynPool->Find($query->CommentId($dmid));
-        
-        if (empty($result)) die("3");
-        
-        foreach ( $result as $danmaku ) {
-            $danmaku->attr[0]["playtime"] = $targetTime;
-        }
-        $dynPool->Save()->Dispose();
-        Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Done!");
-        die("0");
+	{
 	}
 	
 	public function del()
@@ -159,26 +137,23 @@ class b3pi extends K_Controller {
         }
         
         $poolId = $this->Input->Request->dm_inid;
-        $dynPool = GetPool('Bilibili3', $poolId, PoolMode::D);
-        $deleted = "";
+        $dynPool = PoolUtils::GetPool('Bilibili3', $poolId, PoolMode::D);
+        $idsToDelete = explode(",", $this->Input->Request->playerdel);
         
-        foreach (explode(",", $this->Input->Request->playerdel) as $id)
+        $msg = "";
+        
+        foreach ($idsToDelete as $id)
         {
-            $query = new DanmakuXPathBuilder();
-            $result = $dynPool->Find($query->CommentId($id));
-            $matched = count($result);
-            
-            if ($matched == 1) {
-                unset($result[0][0]);
-                $deleted .= ", '{$id}'";
+            if ($dynPool->Delete($id)) {
+                $msg .= "$id deleted;    ";
             } else {
-                Utils::WriteLog('Dmm::del()', "Bilibili3 :: {$poolId} :: Unexcepted dmid {$id}, matched {$matched}");
-                die("3");
+                $msg .= "can't found id {$id};    ";
             }
         }
-        $dynPool->Save()->Dispose();
         
-        Utils::WriteLog('Dmm::del()', "Bilibili3 :: {$poolId} :: Done!  \r\n{$deleted}");
+        $dynPool->Save();
+        
+        Utils::WriteLog('Dmm::del()', "Bilibili3 :: {$poolId} :: Done!  \r\n{$msg}");
         die("0");
 	}
 

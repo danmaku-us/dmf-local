@@ -10,3 +10,16 @@ function GenerationTime(){
 	$GenerationTotal = round($GenerationTotal, 5);
 	print "$GenerationTotal";
 }
+
+function formatBytes($size, $precision = 2)
+{
+    $base = log($size) / log(1024);
+    $suffixes = array('', 'k', 'M', 'G', 'T');   
+
+    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
+}
+
+function MemoryPeakUseage() {
+    $mem = memory_get_peak_usage(true);
+    print formatBytes($mem);
+}

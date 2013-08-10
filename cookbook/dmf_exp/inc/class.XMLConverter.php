@@ -2,10 +2,15 @@
 
 class XMLConverter
 {
-    public static function FromUniXML($format, SimpleXMLElement $xml) {
+
+    /*****  以下格式用于XML输出时转换 *****/
+    //in format : string
+    //in xml    : SimpleXMLElement []
+    
+    public static function FromUniXML($format, array $xml) {
         switch (strtolower($format)) {
             case "raw":
-                return $xml;
+                return self::ToRawFormat($xml);
             case "comments":
                 //此处为2dland用的comments格式
                 return self::ToCommentsFormat($xml);
@@ -23,74 +28,95 @@ class XMLConverter
         }
     }
     
-    public static function ToCommentsFormat(SimpleXMLElement $xml) {
-        $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
-        foreach ($xml->comment as $node) {
-            $attr = $node->attr[0]->attributes();
-            $nodeA = $node->attributes();
-            
-            $attrs = array();
-            $pt = $attr['playtime'];
-            $mode = $attr['mode'];
-            $fontsize = $attr['fontsize'];
-            $color = $attr['color'];
-            $SE = $attr['showeffect'];
-            $HE = $attr['hideeffect'];
-            $FE = $attr['fonteffect'];
-            $sendtime = $nodeA['sendtime'];
-            
-            $usText = $node->text;
-            $text = htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
-            $XMLString .= <<<CMT
-
-    <comment mode="$mode" showEffect="$SE" hideEffect="$HE" fontEffect="$FE" isLocked="-1" fontSize="$fontsize" color="$color">
-        <playTime>$pt</playTime>
-        <message>$text</message>
-        <sendTime>$sendtime</sendTime>
-    </comment>
-CMT;
+    public static function ToRawFormat(array $xml) {
+        $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>\r\n";
+        foreach ($xml as $node) {
+            $XMLString .= self::ToRawNode($node)."\r\n";
         }
-        $XMLString .= "\r\n</comments>";
-        return simplexml_load_string($XMLString);
+        $XMLString .= "</comments>";
+        return $XMLString;
     }
     
-    public static function ToDataFormat(SimpleXMLElement $xml) {
-        $XMLString = '<?xml version="1.0" encoding="utf-8"?><information>';
-        foreach ($xml->comment as $node) {
-            $attr = $node->attr[0]->attributes();
-            $nodeA = $node->attributes();
-            
-            $attrs = array();
-            $pt = $attr['playtime'];
-            $mode = $attr['mode'];
-            $fontsize = $attr['fontsize'];
-            $color = $attr['color'];
-            $sendtime = $nodeA['sendtime'];
-            
-            $usText = $node->text;
-            $pString = implode(",", $attrs);
-            $text .= htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
-            $XMLString .= <<<CMT
+    public static function ToRawNode($node) {
+        return $node->asXML();
+    }
+    
+    public static function ToCommentsFormat(array $xml) {
+        $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
+        foreach ($xml as $node) {
+            $XMLString .= self::ToCommentsNode($node);
+        }
+        $XMLString .= "\r\n</comments>";
+        return $XMLString;
+    }
+    
+    public static function ToCommentsNode(SimpleXMLElement $node) {
+        $attr = $node->attr[0]->attributes();
+        $nodeA = $node->attributes();
+        
+        $attrs = array();
+        $pt = $attr['playtime'];
+        $mode = $attr['mode'];
+        $fontsize = $attr['fontsize'];
+        $color = $attr['color'];
+        $SE = $attr['showeffect'];
+        $HE = $attr['hideeffect'];
+        $FE = $attr['fonteffect'];
+        $sendtime = $nodeA['sendtime'];
+        
+        $usText = $node->text;
+        $text = htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
+        return <<<CMT
 
-  <data>
+<comment mode="$mode" showEffect="$SE" hideEffect="$HE" fontEffect="$FE" isLocked="-1" fontSize="$fontsize" color="$color">
+    <playTime>$pt</playTime>
+    <message>$text</message>
+    <sendTime>$sendtime</sendTime>
+</comment>
+CMT;
+    }
+    
+    public static function ToDataFormat(array $xml) {
+        $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<information>";
+        foreach ($xml as $node) {
+            $XMLString .= self::ToDataNode($node);
+        }
+        $XMLString .= "\r\n</information>";
+        return $XMLString;
+    }
+    
+    public static function ToDataNode(SimpleXMLElement $node) {
+        $attr = $node->attr[0]->attributes();
+        $nodeA = $node->attributes();
+        
+        $attrs = array();
+        $pt = $attr['playtime'];
+        $mode = $attr['mode'];
+        $fontsize = $attr['fontsize'];
+        $color = $attr['color'];
+        $sendtime = $nodeA['sendtime'];
+        
+        $usText = $node->text;
+        $pString = implode(",", $attrs);
+        $text .= htmlspecialchars((string)$usText, ENT_NOQUOTES, "UTF-8");
+        return <<<CMT
+
+<data>
     <playTime>$pt</playTime>
     <message fontsize="$fontsize" color="$color" mode="$mode">$text</message>
     <times>$sendtime</times>
-  </data>
+</data>
 CMT;
-        }
-        $XMLString .= "\r\n</information>";
-        return simplexml_load_string($XMLString);
     }
     
     //unused
-    public static function ToCLFormat(SimpleXMLElement $xml) {
+    public static function ToCLFormat(array $xml) {
         
     }
     
-    public static function ToJsonFormat(SimpleXMLElement $xml) {
+    public static function ToJsonFormat(array $xml) {
         $json = array();
-        foreach ($xml->comment as $node) {
+        foreach ($xml as $node) {
             $attr = $node->attr[0]->attributes();
             $nodeA = $node->attributes();
             $attrs = array();
@@ -114,9 +140,13 @@ CMT;
         }
     }
     
-    public static function ToIDFormat(SimpleXMLElement $xml) {
+    public static function ToJsonNode(SimpleXMLElement $node) {
+    
+    }
+    
+    public static function ToIDFormat(array $xml) {
         $XMLString = '<?xml version="1.0" encoding="UTF-8"?><i>';
-        foreach ($xml->comment as $node) {
+        foreach ($xml as $node) {
             $attr = $node->attr[0]->attributes();
             $nodeA = $node->attributes();
             
@@ -136,8 +166,13 @@ CMT;
             $XMLString .= "\r\n<d p=\"$pString\">$text</d>";
         }
         $XMLString .= "\r\n</i>";
-        return simplexml_load_string($XMLString);
+        return $XMLString;
     }
+    
+
+    /*****  以下格式用于XML输入时转换 *****/
+    //in format : SimpleXMLElement
+    //in xml    : SimpleXMLElement [] (comments子节点)
     
     
     // SimpleXMLElement -> SimpleXMLElement
@@ -146,16 +181,16 @@ CMT;
             case "comments":
                 //因为2dland根节点和目前DMF一样
                 if (empty($xml->comment[0]->playTime)) {
-                    return $obj;
+                    return $xml->xpath("/comments/comment");
                 } else {
-                    return self::FromCommentsFormat($xml);
+                    return self::FromCommentsFormat($xml)->xpath("/comments/comment");
                 }
             case "information":
-                return self::FromDataFormat($xml);
+                return self::FromDataFormat($xml)->xpath("/comments/comment");
             case "c":
-                return self::FromCLFormat($xml);
+                return self::FromCLFormat($xml)->xpath("/comments/comment");
             case "i":
-                return self::FromIDFormat($xml);
+                return self::FromIDFormat($xml)->xpath("/comments/comment");
 			default:
 				throw new UnexpectedValueException("Can't find corresponding format coverter.");
         }

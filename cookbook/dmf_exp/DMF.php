@@ -138,15 +138,11 @@ function DMF_PlayerPageDisplay() {
     return keep($xtpl->text());
 }
 
-include_once(DMF_ROOT_PATH."inc/class.DanmakuPoolBase.php");
-include_once(DMF_ROOT_PATH."inc/class.DanmakuPoolBaseIO.php");
 include_once(DMF_ROOT_PATH."inc/class.VideoSource.php");
 include_once(DMF_ROOT_PATH."inc/action.SetDefaultPlayer.php");
 include_once(DMF_ROOT_PATH."DMF_Version.php");
 Player::$playerBase = $ScriptUrl.'/pub/players/';
 SafeEnum::Create('PoolMode', 'S', 'D', 'A');
-SafeEnum::Create('LoadMode', 'lazy', 'inst');
-SafeEnum::Create('XmlAuth', 'read', 'edit', 'admin');
 SafeEnum::Create("XmlErrorType", "NoError", "Auth", "Broken");
 
 /*
@@ -186,3 +182,5 @@ if ($LOCALVERSION) {
 } else {
 	include(DMF_ROOT_PATH."DMF_main.php");
 }
+
+//$p = new DanmakuPool('Bilibili3', '1000', PoolMode::D);

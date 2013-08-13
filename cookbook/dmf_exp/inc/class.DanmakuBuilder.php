@@ -28,7 +28,7 @@ class DanmakuBuilder {
         $this->attrIdx += 1;
     }
     
-    public function ToString() {
+    public function __toString() {
         $text = <<<CMT
 
 <comment id="{$this->dmid}" poolid="{$this->pool}" userhash="{$this->userhash}" sendtime="{$this->time}">

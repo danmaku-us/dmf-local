@@ -8,7 +8,7 @@ function cmtSave($gc, $id, DanmakuBuilder $builder) {
         return false;
     }
     DanmakuTimeShift($page, $id, $builder);
-    $page['text'] .= $builder->ToString();
+    $page['text'] .= (string) $builder;
     WritePage($_pagename, $page);
     return true;
 }

@@ -5,6 +5,7 @@ class b3pi extends K_Controller {
     public function __construct() {
         $this->GroupConfig = Utils::GetGroupConfig("bilibili3");
         parent::__construct();
+        $this->Helper("danmakuPool");
     }
     
 	public function index()
@@ -40,7 +41,6 @@ class b3pi extends K_Controller {
 	public function dad()
 	{
         global $BilibiliAuthLevel;
-        $this->Helper("danmakuPool");
         $data = array();
         if (empty($this->Input->Request->id)) {
             $data['ChatId'] = $this->Input->Request->id;

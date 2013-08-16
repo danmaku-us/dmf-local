@@ -34,10 +34,11 @@ class DanmakuPool implements Iterator, ArrayAccess
         return $this->offsetExists($id);
     }
     
-    public function Update($id, SimpleXMLElement $new) {
-        if ( self::IsValidNode($value) ) {
-            $this->container[$id] = $new;
-        }
+    public function Update(SimpleXMLElement $new, $id = null) {
+        if ( !self::IsValidNode($new) ) return false;
+        $id = ($id == null) ? intval($new->attr[0]["playtime"]) : intval($id);
+        $this->container[$id] = $new;
+        return true;
     }
     
     public function Delete($id) {

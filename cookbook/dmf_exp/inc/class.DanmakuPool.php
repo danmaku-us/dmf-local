@@ -68,17 +68,20 @@ class DanmakuPool implements Iterator, ArrayAccess
     }
     
     public function RandomizeID() {
-        //FIXME
-        //FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
-//FIXME
+        $newarr = array();
+        $getUniqueId = function () use ($newarr) {
+            do {
+                $id = mt_rand();
+            } while (isset($newarr[$id]));
+            return $id;
+        };
+            
+        foreach ($this->container as $id => $cmt) {
+            $id = $getUniqueId();
+            $cmt[0]["id"] = $id;
+            $newarr[$id] = $cmt;
+        }
+        $this->container = $newarr;
     }
     
     public function Append(array $arr) {

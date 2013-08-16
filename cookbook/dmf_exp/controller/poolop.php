@@ -47,7 +47,7 @@ class PoolOp extends K_Controller {
 				break;
 		}
         
-		$this->display("和谐弹幕池 $pair 完毕。".self::GoBack);
+		$this->display("和谐弹幕池 $pool 完毕。".self::GoBack);
 	}
 	
 	
@@ -178,6 +178,49 @@ class PoolOp extends K_Controller {
             $this->display("弹幕池{$pool}校验正常".self::GoBack);
         }
 	}
+	
+	public function randomize($group, $dmid, $pool = 'dynamic')
+	{
+		if (!XmlAuth::IsAdmin($group, $dmid)) {
+            Utils::WriteLog('PoolOp::Randomize()', "{$group} :: {$dmid} :: 权限不足");
+            $this->display("越权访问。");
+            return;
+        }
+
+
+		switch (strtolower($pool))
+		{
+			case "static":
+                $staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+				$staPool->RandomizeID();
+				$staPool->Save();
+				unset($staPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
+				break;
+			case "dynamic":
+                $dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+				$dynPool->RandomizeID();
+				$dynPool->Save();
+				unset($dynPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
+				break;
+			case "all":
+                $staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+				$staPool->RandomizeID();
+				$staPool->Save();
+				unset($staPool);
+				
+                $dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+				$dynPool->RandomizeID();
+				$dynPool->Save();
+				unset($dynPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} ::Done!");
+				break;
+		}
+        
+		$this->display("初始化弹幕id $pool 完毕。".self::GoBack);
+	}
+
 	
 	private function display($msg)
 	{

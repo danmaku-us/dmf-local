@@ -92,8 +92,12 @@ IsMuti
                     <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
                     <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/all' style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
                 移动弹幕池： 
-                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/static/dynamic' style='color: black'>S-D</a>&nbsp;
-                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/dynamic/static' style='color: black'>D-S</a>&nbsp;
+                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/static/dynamic' style='color: black'>S-&gt;D</a>&nbsp;
+                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/dynamic/static' style='color: black'>D-&gt;S</a>&nbsp;
+                弹幕id随机化：
+                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/static' style='color: black'>静态</a>&nbsp;
+                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
+                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/all' style='color: black'>双开</a>&nbsp;&nbsp;&nbsp;
             </span>
             <!-- END: PoolOperation -->
             <!-- END: DanmakuBar -->

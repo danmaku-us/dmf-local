@@ -75,7 +75,7 @@ class a4pi extends K_Controller {
 			}
 		}
 		
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
     }
     
     public function getvideobyid($pageid)

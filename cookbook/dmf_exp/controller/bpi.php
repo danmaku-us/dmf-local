@@ -146,7 +146,7 @@ class Bpi extends K_Controller {
         foreach ( $result as $danmaku ) {
             $danmaku->attr[0]["playtime"] = $targetTime;
         }
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
         Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Done!");
         die("0");
 	}
@@ -180,7 +180,7 @@ class Bpi extends K_Controller {
                 die("3");
             }
         }
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
         
         Utils::WriteLog('Dmm::del()', "Bilibili2 :: {$poolId} :: Done!  \r\n{$deleted}");
         die("0");

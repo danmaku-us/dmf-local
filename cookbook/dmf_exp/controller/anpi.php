@@ -67,7 +67,7 @@ class Anpi extends K_Controller {
 			}
 		}
 		
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
     }
     
 	private function hashCmt($text, $color, $size, $mode, $stime)

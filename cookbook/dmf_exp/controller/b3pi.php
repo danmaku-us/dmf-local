@@ -132,7 +132,7 @@ class b3pi extends K_Controller {
         
         $targetTime = intval($this->Input->Request->time);
         $dmid = intval($this->Input->Request->dmid);
-        $poolId = intval($this->Input->Request->cid);
+        $poolId = intval($this->Input->Request->dm_inid);
         if (is_null($poolId)) die("2");
         
         $dynPool = GetPool('Bilibili3', $poolId, PoolMode::D);
@@ -144,7 +144,7 @@ class b3pi extends K_Controller {
         foreach ( $result as $danmaku ) {
             $danmaku->attr[0]["playtime"] = $targetTime;
         }
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
         Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Done!");
         die("0");
 	}
@@ -161,7 +161,6 @@ class b3pi extends K_Controller {
         $poolId = $this->Input->Request->dm_inid;
         $dynPool = GetPool('Bilibili3', $poolId, PoolMode::D);
         $deleted = "";
-        
         foreach (explode(",", $this->Input->Request->playerdel) as $id)
         {
             $query = new DanmakuXPathBuilder();
@@ -176,7 +175,7 @@ class b3pi extends K_Controller {
                 die("3");
             }
         }
-        $dynPool->Save()->Dispose();
+        $dynPool->SaveAndDispose();
         
         Utils::WriteLog('Dmm::del()', "Bilibili3 :: {$poolId} :: Done!  \r\n{$deleted}");
         die("0");

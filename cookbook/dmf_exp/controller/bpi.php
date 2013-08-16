@@ -5,6 +5,7 @@ class Bpi extends K_Controller {
     public function __construct() {
         $this->GroupConfig = Utils::GetGroupConfig("Bilibili2");
         parent::__construct();
+        $this->Helper("danmakuPool");
     }
     
 	public function index()
@@ -40,7 +41,6 @@ class Bpi extends K_Controller {
 	public function dad()
 	{
         global $BilibiliAuthLevel;
-        $this->Helper("danmakuPool");
         
         $data = array();
         
@@ -134,7 +134,7 @@ class Bpi extends K_Controller {
         
         $targetTime = intval($this->Input->Request->time);
         $dmid = intval($this->Input->Request->dmid);
-        $poolId = intval($this->Input->Request->cid);
+        $poolId = intval($this->Input->Request->dm_inid);
         if (is_null($poolId)) die("2");
         
         $dynPool = GetPool('Bilibili2', $poolId, PoolMode::D);
@@ -161,11 +161,8 @@ class Bpi extends K_Controller {
         }
         
         $poolId = $this->Input->Request->dm_inid;
-        
-        $dynPool = GetPool('Bilibili3', $poolId, PoolMode::D);
-
+        $dynPool = GetPool('Bilibili2', $poolId, PoolMode::D);
         $deleted = "";
-        
         foreach (explode(",", $this->Input->Request->playerdel) as $id)
         {
             $query = new DanmakuXPathBuilder();

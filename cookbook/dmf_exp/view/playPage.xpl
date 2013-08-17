@@ -29,17 +29,18 @@ IsMuti
             </div>
         </td>
         <td rowspan='3' bgcolor='#f7f7f7' width='950'  valign='top'>
+            <!-- BEGIN: PartContainer -->
             <div  style='font-size: small;' > 
                 <p><strong>分P:</strong><br />
                 <!-- BEGIN: PARTDATA -->
                 {PARTTEXT}
                 <!-- END: PARTDATA -->
              </p></div>
-            <p><strong>备注:</strong>
+            <!-- END: PartContainer -->
+            <p><strong>备注:</strong></p>
             <!-- BEGIN: DESC -->
             {DESCTEXT}
             <!-- END: DESC -->
-            </p><div class='vspace'></div>
         </td>
     </tr>
     <tr>
@@ -50,8 +51,8 @@ IsMuti
             <form action='/poolop/post/{GROUP}/{DANMAKUID}' class='DanmakuBar' enctype='multipart/form-data' method='post'>
                 <input name='uploadfile' type='file' />弹幕池:<select class='inputbox' name='Pool'>
                     <option value='Static'>静态</option>
-                    <option value='Dynamic'>动态</option>
-                </select>追加:<input name='Append' type='checkbox' value='true' /><input class='inputbutton' name='post' type='submit' value='上传' />
+                    <option value='Dynamic' selected="selected">动态</option>
+                </select>追加:<input name='Append' type='checkbox' value='true' checked="checked"/><input class='inputbutton' name='post' type='submit' value='上传' />
             </form>&nbsp;&nbsp;
             <!-- END: Upload -->
             <!-- BEGIN: Download -->
@@ -73,6 +74,7 @@ IsMuti
                 <input class='inputbutton' type='submit' value='下载' />
             </form>&nbsp;&nbsp;
             <!-- END: Download -->
+            <!-- BEGIN: Refresh--> <span class='DanmakuBar'> <a style='color: black' href="javascript:refreshPlayer();">刷新</a> </span><!-- END: Refresh-->
             <!-- BEGIN: NewLine--> <br /> <!-- END: NewLine-->
             <!-- BEGIN: DynamicPool -->
             <span style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px; line-height: 2em;'>
@@ -91,9 +93,9 @@ IsMuti
                     <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/static' style='color: black'>静态</a>&nbsp;
                     <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
                     <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/all' style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
-                移动弹幕池： 
-                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/static/dynamic' style='color: black'>S-&gt;D</a>&nbsp;
-                    <a class='urllink' href='/poolop/move/{GROUP}/{DANMAKUID}/dynamic/static' style='color: black'>D-&gt;S</a>&nbsp;
+                合并弹幕池： 
+                    <a class='urllink' href='/poolop/merge/{GROUP}/{DANMAKUID}/static/dynamic' style='color: black'>S-&gt;D</a>&nbsp;
+                    <a class='urllink' href='/poolop/merge/{GROUP}/{DANMAKUID}/dynamic/static' style='color: black'>D-&gt;S</a>&nbsp;
                 弹幕id随机化：
                     <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/static' style='color: black'>静态</a>&nbsp;
                     <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
@@ -101,9 +103,12 @@ IsMuti
             </span>
             <!-- END: PoolOperation -->
             <!-- END: DanmakuBar -->
-            <div  id='flashcontent' > </div>
-            <p>
-                <script type="text/javascript">
+            
+            <div id="flashcontainer">
+                <div id='flashcontent'> </div>
+            </div>
+            <script type="text/javascript">
+                function loadPlayer() {
                     var flashvars = {};
                     var params = {};
                     <!-- BEGIN: FlashVars -->{FLASHVARS.Name} = {FLASHVARS.Value};
@@ -112,27 +117,36 @@ IsMuti
                     
                     swfobject.embedSWF("{URL}", "flashcontent", "{WIDTH}", "{HEIGHT}", "10.0.0","expressInstall.swf", flashvars, params);
                     <!-- END: PlayerLoader -->
-                </script>
-            </p>
+                }
+                
+                function refreshPlayer() {
+                    swfobject.removeSWF("flashcontent");
+                    var d = document.createElement("div");
+                    d.setAttribute("id", "flashcontent");
+                    document.getElementById("flashcontainer").appendChild(d);
+                    loadPlayer();
+                }
+                
+                loadPlayer();
+            </script>
+            
         </td>
     </tr>
     <tr>
         <td width='950'  valign='top'>
             <hr />
             <p>切换播放器：&nbsp;&nbsp;
-            <!-- BEGIN: PlayerLoaderCurrent -->
-            <strong>{NAME}</strong>&nbsp;&nbsp;
-            <!-- END: PlayerLoaderCurrent -->
-            <!-- BEGIN: PlayerLoaderAdmin -->
-            <a class='urllink' href='{PLAYER.URL}'>{PLAYER.Name}</a><a class='urllink' href='{PLAYER.SetDefaultUrl}'>&nbsp;<sup>Def</sup></a>&nbsp;&nbsp;
-            <!-- END: PlayerLoaderAdmin -->
-            <!-- BEGIN: PlayerLoaderNormal -->
-            <a class='urllink' href='{PLAYER.URL}'>{PLAYER.Name}</a>&nbsp;&nbsp;
-            <!-- END: PlayerLoaderNormal -->
+                <!-- BEGIN: PlayerLoaderCurrent -->
+                <strong>{NAME}</strong>&nbsp;&nbsp;
+                <!-- END: PlayerLoaderCurrent -->
+                <!-- BEGIN: PlayerLoaderAdmin -->
+                <a class='urllink' href='{PLAYER.URL}'>{PLAYER.Name}</a><a class='urllink' href='{PLAYER.SetDefaultUrl}'>&nbsp;<sup>Def</sup></a>&nbsp;&nbsp;
+                <!-- END: PlayerLoaderAdmin -->
+                <!-- BEGIN: PlayerLoaderNormal -->
+                <a class='urllink' href='{PLAYER.URL}'>{PLAYER.Name}</a>&nbsp;&nbsp;
+                <!-- END: PlayerLoaderNormal -->
+            </p>
         </td>
     </tr>
 </table>
-</div>
-</td>
-</tr></table>
 <!-- END: main -->

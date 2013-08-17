@@ -148,7 +148,7 @@ class PoolOp extends K_Controller {
 		$this->display("非常抱歉，上传成功。".self::GoBack);
 	}
 	
-	public function move($group, $dmid, $from, $to)
+	public function merge($group, $dmid, $from, $to)
 	{
         if (!XmlAuth::IsAdmin($group, $dmid)) {
             Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: Unauthorized access!");
@@ -159,12 +159,13 @@ class PoolOp extends K_Controller {
 		$fromPool =  PoolUtils::GetPool($group, $dmid, PoolUtils::StrToPool($from));
 		$toPool   =  PoolUtils::GetPool($group, $dmid, PoolUtils::StrToPool($to  ));
 		
-		$toPool->MoveFrom($fromPool);
+		$toPool->MergeFrom($fromPool);
+		$fromPool->Clear();
 		
 		$fromPool->Save();
 		$toPool->Save();
 		Utils::WriteLog('PoolOp::move()', "{$group} :: {$dmid} :: 从 {$from} 移动到 {$to} 成功");
-		$this->display("弹幕池移动： $from -> $to 完毕。".self::GoBack);
+		$this->display("弹幕池合并： $from -> $to 完毕。".self::GoBack);
 	}
 	
 	public function validate($group, $dmid, $pool = 'dynamic')

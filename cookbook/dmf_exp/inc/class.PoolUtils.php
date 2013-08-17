@@ -61,7 +61,7 @@ class PoolUtils
             return false;
         }
         self::DanmakuTimeShift($page, $id, $builder);
-        $page['text'] .= $builder->ToString();
+        $page['text'] .= (string) $builder;
         WritePage($_pagename, $page);
         return true;
     }

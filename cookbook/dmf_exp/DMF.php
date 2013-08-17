@@ -103,8 +103,10 @@ function DMF_PlayerPageDisplay() {
     
     $partText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#partinfo#partend'));
     $linkedPartText = preg_replace("|<dt>P([0-9]+)</dt>|", "<dt><a class='urllink' href='?Part=$1'>P$1</a></dt>", $partText);
-    $xtpl->assign("PARTTEXT", $linkedPartText);
-    $xtpl->parse("main.PARTDATA");
+    if (!empty($linkedPartText)) {
+        $xtpl->assign("PARTTEXT", $linkedPartText);
+        $xtpl->parse("main.PARTDATA");
+    }
     $descText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#comment#commentend'));
     $xtpl->assign("DESCTEXT", $descText);
     $xtpl->parse("main.DESC");
@@ -125,6 +127,7 @@ function DMF_PlayerPageDisplay() {
         $xtpl->parse("main.DanmakuBar.Download.Format");
     }
     $xtpl->parse("main.DanmakuBar.Download");
+    $xtpl->parse("main.DanmakuBar.Refresh");
     
     if (CondAuth($pagename, 'edit')) {
         $xtpl->parse("main.DanmakuBar.NewLine");

@@ -5,7 +5,6 @@ class Bpi extends K_Controller {
     public function __construct() {
         $this->GroupConfig = Utils::GetGroupConfig("Bilibili2");
         parent::__construct();
-        $this->Helper("danmakuPool");
     }
     
 	public function index()

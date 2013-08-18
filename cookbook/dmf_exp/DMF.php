@@ -172,7 +172,7 @@ if ($LOCALVERSION) {
 	$HandleAuth['dmpost'] = 'admin`';
 }
 //$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,qule.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,pdm-bili.js"></script>'."\n";
-$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,jq.bilibili.js,page.arc.js"></script>'."\n";
+$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,dmflib.js,jq.bilibili.js,page.arc.js"></script>'."\n";
 
 
 //处理投稿请求

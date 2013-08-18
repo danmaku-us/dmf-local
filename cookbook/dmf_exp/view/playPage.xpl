@@ -28,9 +28,9 @@ IsMuti
                 <!-- END: messages -->
             </div>
         </td>
-        <td rowspan='3' bgcolor='#f7f7f7' width='950'  valign='top'>
+        <td rowspan='3' bgcolor='#f7f7f7' width='950' valign='top'>
             <!-- BEGIN: PartContainer -->
-            <div  style='font-size: small;' > 
+            <div style='font-size: small;' > 
                 <p><strong>分P:</strong><br />
                 <!-- BEGIN: PARTDATA -->
                 {PARTTEXT}
@@ -41,6 +41,8 @@ IsMuti
             <!-- BEGIN: DESC -->
             {DESCTEXT}
             <!-- END: DESC -->
+            <p><strong>日志:</strong></p>
+            <div id="logging"></div>
         </td>
     </tr>
     <tr>
@@ -128,6 +130,7 @@ IsMuti
                 }
                 
                 loadPlayer();
+                DMF.AppendLog("播放器加载完毕");
             </script>
             
         </td>

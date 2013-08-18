@@ -50,7 +50,7 @@ class Bpi extends K_Controller {
             $data['ChatId'] = 0;
         }
         
-        if (XmlAuth('Bilibili2', $this->Input->Request->id, XmlAuth::edit)) {
+        if (XmlAuth::IsEdit('Bilibili2', $this->Input->Request->id)) {
             $data['AuthLevelString'] = $BilibiliAuthLevel->Danmakuer;
         } else {
             $data['AuthLevelString'] = $BilibiliAuthLevel->DefaultLevel;
@@ -100,8 +100,6 @@ class Bpi extends K_Controller {
 	
 	public function dmpost()
 	{
-        $this->Helper("playerInterface");
-        
         if ($this->requireVars(
                 $this->Input->Post,
                 array("date", "playTime", "mode", "fontsize", "color", "pool", "message"))) {
@@ -117,7 +115,7 @@ class Bpi extends K_Controller {
                 'color'     => $this->Input->Post->color);
 		$builder->AddAttr($attrs);
 		
-        if (cmtSave($this->GroupConfig, $this->Input->Post->cid, $builder)) {
+        if (PoolUtils::AppendToDynamicPool($this->GroupConfig, $this->Input->Post->cid, $builder)) {
             echo mt_rand();
         } else {
             die("-55");
@@ -129,26 +127,28 @@ class Bpi extends K_Controller {
     
     
 	public function update_comment_time()
-	{   
-        
-        
+	{
         $targetTime = intval($this->Input->Request->time);
         $dmid = intval($this->Input->Request->dmid);
         $poolId = intval($this->Input->Request->dm_inid);
         if (is_null($poolId)) die("2");
         
-        $dynPool = GetPool('Bilibili2', $poolId, PoolMode::D);
-        $query = new DanmakuXPathBuilder();
-        $result = $dynPool->Find($query->CommentId($dmid));
+        $dynPool = PoolUtils::GetPool('Bilibili2', $poolId, PoolMode::D);
+        if (!$dynPool->Exists($dmid)) die("3");
         
-        if (empty($result)) die("3");
+        $cmt = $dynPool[$dmid];
+        $cmt->attr[0]["playtime"] = $targetTime;
         
-        foreach ( $result as $danmaku ) {
-            $danmaku->attr[0]["playtime"] = $targetTime;
+        $res = $dynPool->Update($cmt);
+        
+        if ($res == true) {
+            $dynPool->Save();
+            Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Done!");
+            die("0");
+        } else {
+            Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Fail!");
+            die("-1");
         }
-        $dynPool->SaveAndDispose();
-        Utils::WriteLog('Dmm::update_comment_time()', "{$poolId} :: Pool->Save() :: Done!");
-        die("0");
 	}
 	
 	public function del()
@@ -161,25 +161,22 @@ class Bpi extends K_Controller {
         }
         
         $poolId = $this->Input->Request->dm_inid;
-        $dynPool = GetPool('Bilibili2', $poolId, PoolMode::D);
-        $deleted = "";
-        foreach (explode(",", $this->Input->Request->playerdel) as $id)
+        $dynPool =PoolUtils::GetPool('Bilibili2', $poolId, PoolMode::D);
+        $idsToDelete = explode(",", $this->Input->Request->playerdel);
+        
+        $msg = "";
+        foreach ($idsToDelete as $id)
         {
-            $query = new DanmakuXPathBuilder();
-            $result = $dynPool->Find($query->CommentId($id));
-            $matched = count($result);
-            
-            if ($matched == 1) {
-                unset($result[0][0]);
-                $deleted .= ", '{$id}'";
+            if ($dynPool->Delete($id)) {
+                $msg .= "$id deleted;    ";
             } else {
-                Utils::WriteLog('Dmm::del()', "Bilibili2 :: {$poolId} :: Unexcepted dmid {$id}, matched {$matched}");
-                die("3");
+                $msg .= "can't found id {$id};    ";
             }
         }
-        $dynPool->SaveAndDispose();
         
-        Utils::WriteLog('Dmm::del()', "Bilibili2 :: {$poolId} :: Done!  \r\n{$deleted}");
+        $dynPool->Save();
+        
+        Utils::WriteLog('Dmm::del()', "Bilibili2 :: {$poolId} :: Done!  \r\n{$msg}");
         die("0");
 	}
 
@@ -197,26 +194,4 @@ class Bpi extends K_Controller {
 	{
         die("0");
 	}
-	
-    private function dmid_to_idhash($dmid, $prefix = true)
-    {
-        $numb = $head ? substr(md5("DMR.B".$vid),0,4) : substr(md5($vid),0,4);
-        return intval($numb, 16);
-    }
-
-    private function idhash_to_dmid($hash)
-    {
-        $pn = null;
-        foreach ( ListPages("/DMR\.B/") as $page) {
-            if ( dmid_to_idhash($page, false) == $hash ) {
-                $pn = $page;
-            }
-        }
-        
-        if (is_null($pn)) return null;
-        
-        $dmid = pathinfo($pn, PATHINFO_EXTENSION);
-        $dmid = substr($dmid, 1);
-        return $dmid;
-    }
 }

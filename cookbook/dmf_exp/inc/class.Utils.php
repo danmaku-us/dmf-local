@@ -1,46 +1,50 @@
 <?php if (!defined('PmWiki')) exit();
 class Utils
 {
+    public static function get_xml_error($errors, $xml)
+    {
+        $xml = explode("\n", $xml);
+        foreach ($errors as $error) {
+            $return .= $xml[$error->line - 1] . "\n";
+            $return .= str_repeat('-', $error->column) . "^\n";
+
+            switch ($error->level) {
+                case LIBXML_ERR_WARNING:
+                    $return .= "Warning $error->code: ";
+                    break;
+                 case LIBXML_ERR_ERROR:
+                    $return .= "Error $error->code: ";
+                    break;
+                case LIBXML_ERR_FATAL:
+                    $return .= "Fatal Error $error->code: ";
+                    break;
+            }
+
+            $return .= trim($error->message) .
+                       "\n  Line: $error->line" .
+                       "\n  Column: $error->column";
+
+            if ($error->file) {
+                $return .= "\n  File: $error->file";
+            }
+
+            $return.= "$return\n\n--------------------------------------------\n\n";
+        }
+        return $return;
+    }
+    
 	public static function display_xml_error($error, $xmlstr = NULL)
 	{
-		if (!is_null($xmlstr))
-		{
-			$xml = explode("\n",$xml);
-			$return  = $xml[$error->line - 1] . "<br />";
-		}
-		
-	    $return .= str_repeat('-', $error->column) . "^<br />";
-	
-	    switch ($error->level) {
-	        case LIBXML_ERR_WARNING:
-	            $return .= "Warning $error->code: ";
-	            break;
-	         case LIBXML_ERR_ERROR:
-	            $return .= "Error $error->code: ";
-	            break;
-	        case LIBXML_ERR_FATAL:
-	            $return .= "Fatal Error $error->code: ";
-	            break;
-	    }
-	
-	    $return .= trim($error->message) .
-	               "<br />  Line: $error->line" .
-	               "<br />  Column: $error->column";
-	
-	    if ($error->file) {
-	        $return .= "<br />  File: $error->file";
-	    }
-	
-	    return "$return<br /><br />--------------------------------------------<br /><br />";
+        return nl2br(self::get_xml_error($error, $xmlstr), true);
 	}
 
-	public static function GetXMLFilePath($dmid, $group)
+	public static function GetXMLFilePath($group, $dmid)
 	{
 		$gc = self::GetGroupConfig($group);
 		return $gc->XMLFolderPath."/$dmid.xml";
 	}
 	
-	public static function GetDMRPageName($dmid, $group)
+	public static function GetDMRPageName($group, $dmid = "*")
 	{
         $gc = self::GetGroupConfig($group);
         if ($dmid == "*") {
@@ -50,19 +54,7 @@ class Utils
         }
 	}
 	
-	public static function GetIOClass($group, $dmid, $poolMode)
-	{
-		$group = self::GetGroup($group);
-		
-		if ($poolMode == PoolMode::S) {
-			return new StaticPoolIO($dmid, $group);
-        } else if ($poolMode == PoolMode::D) {
-			return new DynamicPoolIO($dmid, $group);
-		} else {
-            throw new Exception("Unexcepted IOClass Type");
-        }
-	}
-	
+	//FIXME
 	public static function GetGroup($str)
 	{
         static $Mapping = array(

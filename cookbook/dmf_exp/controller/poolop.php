@@ -8,42 +8,46 @@ class PoolOp extends K_Controller {
     const GoBack = "<script language='javascript'> setTimeout('history.go(-1)', 2000);</script>两秒后传送回家";
         
     public function PoolOp() {
-        $this->Helper("danmakuPool");
         parent::__construct();
     }
     
 	public function clear($group, $dmid, $pool)
 	{
-		$staPool = GetPool($group, $dmid, PoolMode::S);
-		$dynPool = GetPool($group, $dmid, PoolMode::D);
-		if (!XmlAuth($group, $dmid, XmlAuth::admin)) {
+		if (!XmlAuth::IsAdmin($group, $dmid)) {
             Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: 权限不足");
             $this->display("越权访问。");
             return;
         }
         
+        $staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+		$dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+        
 		switch (strtolower($pool))
 		{
 			case "static":
 				$staPool->Clear();
-				$staPool->SaveAndDispose();
+				$staPool->Save();
+				unset($staPool);
 				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
 				break;
 			case "dynamic":
 				$dynPool->Clear();
-				$dynPool->SaveAndDispose();
+				$dynPool->Save();
+				unset($dynPool);
 				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
 				break;
 			case "all":
 				$staPool->Clear();
                 $dynPool->Clear();
-                $staPool->SaveAndDispose();
-				$dynPool->SaveAndDispose();
+                $staPool->Save();
+				$dynPool->Save();
+				unset($staPool);
+				unset($dynPool);
 				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} ::Done!");
 				break;
 		}
         
-		$this->display("和谐弹幕池 $pair 完毕。".self::GoBack);
+		$this->display("和谐弹幕池 $pool 完毕。".self::GoBack);
 	}
 	
 	
@@ -52,25 +56,26 @@ class PoolOp extends K_Controller {
         
         $gc = Utils::GetGroupConfig($group);
 
-		$staPool = GetPool($group, $dmid, PoolMode::S);
-		$dynPool = GetPool($group, $dmid, PoolMode::D);
-		
-        $staPool->MoveFrom($dynPool);
-        $XML = $staPool->GetXML();
-        unset($staPool);
-		unset($dynPool);
-		
 		$format = is_null($_GET['format']) ? $gc->AllowedXMLFormat[0] : $_GET['format'];
 		$format = strtolower($format);
 		$chunksize = intval($_GET['split']);
 		$attach = ($_GET['attach'] == 'true');
 		$fileExt = ($format == 'json') ? "json" : "xml";
 		
-		$GetString = function (SimpleXMLElement $XML) use ($format) {
+		$staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+		$dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+		
+		$XMLArr = $staPool->Get() + $dynPool->Get();
+        unset($staPool);
+		unset($dynPool);
+		
+
+		
+		$GetString = function (array $XML) use ($format) {
             if ($format == 'json') {
                 return XMLConverter::ToJsonFormat($XML);
             } else {
-                return XMLConverter::FromUniXML($format, $XML)->asXML();
+                return XMLConverter::FromUniXML($format, $XML);
             }
         };
 		
@@ -79,27 +84,24 @@ class PoolOp extends K_Controller {
             if ($attach) {
                 header("Content-disposition: attachment; filename=\"{$group}_{$dmid}_{$format}.{$fileExt}\"");
             }
-            echo $GetString($XML);
+            echo $GetString($XMLArr);
         } else {
-            header("Content-type: application/octet-stream");
-            header("Content-disposition: attachment; filename=\"{$group}_{$dmid}_{$format}_{$chunksize}.zip\"");
             $tempfile = tempnam(sys_get_temp_dir(), 'DMF');
             $zip = new ZipArchive();
             if ($zip->open($tempfile, ZipArchive::CREATE)!==TRUE) {
                 exit("cannot open zip file <$filename>\n");
             }
-            $chunks = array_chunk($XML->xpath('//comment'), $chunksize);
-            unset($XML);
+            $chunks = array_chunk($XMLArr, $chunksize);
+            unset($XMLArr);
             foreach ( $chunks as $idx => $chunk ) {
-                $XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<comments>";
-                foreach ($chunk as $item) {
-                    $XMLString .= $item->asXML();
-                }
-                $XMLString .= '</comments>';
-                $zip->addFromString("{$group}_{$dmid}_{$idx}.{$fileExt}", $GetString(simplexml_load_string($XMLString)));
+                $zip->addFromString("{$group}_{$dmid}_{$idx}.{$fileExt}", $GetString($chunk));
             }
             $zip->Close();
+            
+            header("Content-type: application/octet-stream");
+            header("Content-disposition: attachment; filename=\"{$group}_{$dmid}_{$format}_{$chunksize}.zip\"");
             readfile($tempfile);
+            
             unlink($tempfile);
         }
 		
@@ -108,7 +110,7 @@ class PoolOp extends K_Controller {
 	public function post($group, $dmid) // GET : pool append
 	{
         
-        if (!XmlAuth($group, $dmid, XmlAuth::edit)) {
+        if (!XmlAuth::IsEdit($group, $dmid)) {
             Utils::WriteLog('PoolOp::post()', "{$group} :: {$dmid} :: 权限不足");
             return;
         }
@@ -128,7 +130,7 @@ class PoolOp extends K_Controller {
 			return;
 		}
 		
-        $pool = GetPool($group, $dmid, StrToPool($this->Input->Post->Pool));
+        $pool = PoolUtils::GetPool($group, $dmid, PoolUtils::StrToPool($this->Input->Post->Pool));
 		$gc = Utils::GetGroupConfig($group);
 		$xmldata = $gc->UploadFilePreProcess(file_get_contents($this->Input->File->uploadfile['tmp_name']));
 		$XMLObj = XMLConverter::ToUniXML($xmldata);
@@ -136,52 +138,90 @@ class PoolOp extends K_Controller {
 		
 		$append = strtolower($this->Input->Post->Append) == 'true' ;
 		if ($append) {
-			$pool->MergeFrom($XMLObj);
+			$pool->Append($XMLObj);
 		} else {
-			$pool->SetXML($XMLObj);
+			$pool->Set($XMLObj);
 		}
         
-        $pool->SaveAndDispose();
+        $pool->Save();
         Utils::WriteLog('PoolOp::post()', "{$group} :: {$dmid} :: Success!");
 		$this->display("非常抱歉，上传成功。".self::GoBack);
 	}
 	
-	public function move($group, $dmid, $from, $to)
+	public function merge($group, $dmid, $from, $to)
 	{
-        if (!XmlAuth($group, $dmid, XmlAuth::admin)) {
+        if (!XmlAuth::IsAdmin($group, $dmid)) {
             Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: Unauthorized access!");
             $this->display("越权访问。");
             return;
         }
         
-		$fromPool =  GetPool($group, $dmid, StrToPool($from));
-		$toPool   =  GetPool($group, $dmid, StrToPool($to  ));
+		$fromPool =  PoolUtils::GetPool($group, $dmid, PoolUtils::StrToPool($from));
+		$toPool   =  PoolUtils::GetPool($group, $dmid, PoolUtils::StrToPool($to  ));
 		
-		$toPool->MoveFrom($fromPool);
+		$toPool->MergeFrom($fromPool);
+		$fromPool->Clear();
 		
-		$fromPool->SaveAndDispose();
-		$toPool->SaveAndDispose();
+		$fromPool->Save();
+		$toPool->Save();
 		Utils::WriteLog('PoolOp::move()', "{$group} :: {$dmid} :: 从 {$from} 移动到 {$to} 成功");
-		$this->display("弹幕池移动： $from -> $to 完毕。".self::GoBack);
+		$this->display("弹幕池合并： $from -> $to 完毕。".self::GoBack);
 	}
 	
 	public function validate($group, $dmid, $pool = 'dynamic')
 	{
-		libxml_clear_errors();
-		GetPool($group, $dmid, StrToPool($pool), LoadMode::inst);
-		
-		$errors = libxml_get_errors();
-        if (empty($errors)) {
+		$acc = DanmakuPoolAccessor::GetAccessor($group, $dmid, PoolUtils::StrToPool($pool));
+        $acc->Load();
+        if ($acc->hasError) {
+            $msg = nl2br(htmlspecialchars($acc->errorString), true);
+            $this->display($msg);
+        } else {
             $this->display("弹幕池{$pool}校验正常".self::GoBack);
+        }
+	}
+	
+	public function randomize($group, $dmid, $pool = 'dynamic')
+	{
+		if (!XmlAuth::IsAdmin($group, $dmid)) {
+            Utils::WriteLog('PoolOp::Randomize()', "{$group} :: {$dmid} :: 权限不足");
+            $this->display("越权访问。");
             return;
         }
-		$errorStr = "";
-		foreach ($errors as $error) {
-			$errorStr .= Utils::display_xml_error($error);
+
+
+		switch (strtolower($pool))
+		{
+			case "static":
+                $staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+				$staPool->RandomizeID();
+				$staPool->Save();
+				unset($staPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
+				break;
+			case "dynamic":
+                $dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+				$dynPool->RandomizeID();
+				$dynPool->Save();
+				unset($dynPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} :: Done!");
+				break;
+			case "all":
+                $staPool = PoolUtils::GetPool($group, $dmid, PoolMode::S);
+				$staPool->RandomizeID();
+				$staPool->Save();
+				unset($staPool);
+				
+                $dynPool = PoolUtils::GetPool($group, $dmid, PoolMode::D);
+				$dynPool->RandomizeID();
+				$dynPool->Save();
+				unset($dynPool);
+				Utils::WriteLog('PoolOp::clear()', "{$group} :: {$dmid} :: {$pool} ::Done!");
+				break;
 		}
-		
-		$this->display($errorStr);
+        
+		$this->display("初始化弹幕id $pool 完毕。".self::GoBack);
 	}
+
 	
 	private function display($msg)
 	{

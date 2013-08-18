@@ -17,7 +17,6 @@ class Anpi extends K_Controller {
     
     public function dmpost()
     {
-        $this->Helper("playerInterface");
         if ($this->requireVars(
                 $this->Input->Post,
                 array("islock", "color", "text", "size", "mode", "stime", "timestamp", "poolid"))) {
@@ -32,7 +31,7 @@ class Anpi extends K_Controller {
                 'color'     => $this->Input->Post->color);
 		$builder->AddAttr($attrs);
 
-        if (cmtSave($this->GroupConfig, $this->Input->Post->poolid, $builder)) {
+        if (PoolUtils::AppendToDynamicPool($this->GroupConfig, $this->Input->Post->poolid, $builder)) {
             die('DMF_Local :: anpi :: dmpost() :: success!');
         } else {
             die('DMF_Local :: anpi :: dmpost() :: page fail!');
@@ -42,38 +41,7 @@ class Anpi extends K_Controller {
     
     public function dmdelete()
     {
-        $this->Helper("playerInterface");
-        if ($this->requireVars(
-                $this->Input->Post,
-                array("islock", "color", "text", "size", "mode", "stime", "timestamp", "poolid"))) {
-            Abort("不允许直接访问");
-        }
-
-		$key = $this->hashCmt(
-            $this->Input->Post->text,
-            $this->Input->Post->color,
-            $this->Input->Post->size,
-            $this->Input->Post->mode,
-            $this->Input->Post->stime);
-        $dmid = basename($this->Input->Post->poolid);
-		$dynPool = GetPool('AcfunN1', $dmid, PoolMode::D);
-        foreach ($dynPool->GetXML()->comment as $node)
-		{
-			$K = $this->hashCmt( $node->text, $node->attr[0]["color"],$node->attr[0]["fontsize"],$node->attr[0]["mode"],$node->attr[0]["playtime"]);
-			if ($K == $key) {
-				echo 'Found!'.$node->text."\r\n";
-				unset($node[0][0]);
-				break;
-			}
-		}
-		
-        $dynPool->SaveAndDispose();
     }
-    
-	private function hashCmt($text, $color, $size, $mode, $stime)
-	{
-		return md5("$text$color$size$mode$stime");
-	}
 	
     public function ujson()
     {

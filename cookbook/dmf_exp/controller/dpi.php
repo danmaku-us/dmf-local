@@ -16,7 +16,7 @@ class Dpi extends K_Controller {
     
     public function memberinfo()
     {
-        if (XmlAuth('twodland1', "*", XmlAuth::edit)) {
+        if (XmlAuth::IsEdit('twodland1', "*")) {
             die('{"uid":"1","username":"DMF用户","groupid":"1"}');
         } else {
             die('{"uid":0,"username":"","groupid":7}');
@@ -30,7 +30,6 @@ class Dpi extends K_Controller {
     
     public function postcmt()
     {
-        $this->Helper('playerInterface');
         if ($this->requireVars(
                 $this->Input->Post,
                 array("fontsize", "playtime", "mode", "showeffect",
@@ -49,7 +48,7 @@ class Dpi extends K_Controller {
                 "color" => $this->Input->Request->color);
         $builder->AddAttr($attrs);
         
-        if (cmtSave($this->GroupConfig, $this->Input->Request->video_id, $builder)) {
+        if (PoolUtils::AppendToDynamicPool($this->GroupConfig, $this->Input->Request->video_id, $builder)) {
             die('{"ok":-1,"cmnt_id":1265}');
         } else {
             die('{"ok":1,"cmnt_id":1265}');

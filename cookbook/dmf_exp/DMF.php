@@ -103,8 +103,10 @@ function DMF_PlayerPageDisplay() {
     
     $partText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#partinfo#partend'));
     $linkedPartText = preg_replace("|<dt>P([0-9]+)</dt>|", "<dt><a class='urllink' href='?Part=$1'>P$1</a></dt>", $partText);
-    $xtpl->assign("PARTTEXT", $linkedPartText);
-    $xtpl->parse("main.PARTDATA");
+    if (!empty($linkedPartText)) {
+        $xtpl->assign("PARTTEXT", $linkedPartText);
+        $xtpl->parse("main.PARTDATA");
+    }
     $descText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#comment#commentend'));
     $xtpl->assign("DESCTEXT", $descText);
     $xtpl->parse("main.DESC");
@@ -125,6 +127,7 @@ function DMF_PlayerPageDisplay() {
         $xtpl->parse("main.DanmakuBar.Download.Format");
     }
     $xtpl->parse("main.DanmakuBar.Download");
+    $xtpl->parse("main.DanmakuBar.Refresh");
     
     if (CondAuth($pagename, 'edit')) {
         $xtpl->parse("main.DanmakuBar.NewLine");
@@ -138,15 +141,11 @@ function DMF_PlayerPageDisplay() {
     return keep($xtpl->text());
 }
 
-include_once(DMF_ROOT_PATH."inc/class.DanmakuPoolBase.php");
-include_once(DMF_ROOT_PATH."inc/class.DanmakuPoolBaseIO.php");
 include_once(DMF_ROOT_PATH."inc/class.VideoSource.php");
 include_once(DMF_ROOT_PATH."inc/action.SetDefaultPlayer.php");
 include_once(DMF_ROOT_PATH."DMF_Version.php");
 Player::$playerBase = $ScriptUrl.'/pub/players/';
 SafeEnum::Create('PoolMode', 'S', 'D', 'A');
-SafeEnum::Create('LoadMode', 'lazy', 'inst');
-SafeEnum::Create('XmlAuth', 'read', 'edit', 'admin');
 SafeEnum::Create("XmlErrorType", "NoError", "Auth", "Broken");
 
 /*
@@ -186,3 +185,5 @@ if ($LOCALVERSION) {
 } else {
 	include(DMF_ROOT_PATH."DMF_main.php");
 }
+
+//$p = new DanmakuPool('Bilibili3', '1000', PoolMode::D);

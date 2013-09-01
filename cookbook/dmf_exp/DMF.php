@@ -143,7 +143,8 @@ function DMF_PlayerPageDisplay() {
 
 include_once(DMF_ROOT_PATH."inc/class.VideoSource.php");
 include_once(DMF_ROOT_PATH."inc/action.SetDefaultPlayer.php");
-include_once(DMF_ROOT_PATH."DMF_Version.php");
+if (file_exists(DMF_ROOT_PATH."DMF_Version.php")) 
+    include_once(DMF_ROOT_PATH."DMF_Version.php");
 Player::$playerBase = $ScriptUrl.'/pub/players/';
 SafeEnum::Create('PoolMode', 'S', 'D', 'A');
 SafeEnum::Create("XmlErrorType", "NoError", "Auth", "Broken");

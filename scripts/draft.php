@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-/*  Copyright 2006, 2010 Patrick R. Michaud (pmichaud@pobox.com)
+/*  Copyright 2006-2013 Patrick R. Michaud (pmichaud@pobox.com)
     This file is part of PmWiki; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published
     by the Free Software Foundation; either version 2 of the License, or
@@ -48,15 +48,21 @@ if (!CondAuth($basename, 'publish'))
 ##  add the draft handler into $EditFunctions
 array_unshift($EditFunctions, 'EditDraft');
 function EditDraft(&$pagename, &$page, &$new) {
-  global $WikiDir, $DraftSuffix, $DeleteKeyPattern, 
-    $DraftRecentChangesFmt, $RecentChangesFmt;
+  global $WikiDir, $DraftSuffix, $DeleteKeyPattern, $EnableDraftAtomicDiff,
+    $DraftRecentChangesFmt, $RecentChangesFmt, $Now;
   SDV($DeleteKeyPattern, "^\\s*delete\\s*$");
   $basename = preg_replace("/$DraftSuffix\$/", '', $pagename);
   $draftname = $basename . $DraftSuffix;
   if ($_POST['postdraft'] || $_POST['postedit']) $pagename = $draftname; 
   else if ($_POST['post'] && !preg_match("/$DeleteKeyPattern/", $new['text'])) { 
     $pagename = $basename; 
-    $page = ReadPage($basename);
+    if(IsEnabled($EnableDraftAtomicDiff, 0)) {
+      $page = ReadPage($basename);
+      foreach($new as $k=>$v) # delete draft history
+        if(preg_match('/:\\d+(:\\d+:)?$/', $k) && ! preg_match("/:$Now(:\\d+:)?$/", $k)) unset($new[$k]);
+      unset($new['rev']);
+      SDVA($new, $page);
+    }
     $WikiDir->delete($draftname);
   }
   else if (PageExists($draftname) && $pagename != $draftname)
@@ -64,5 +70,3 @@ function EditDraft(&$pagename, &$page, &$new) {
   if ($pagename == $draftname && isset($DraftRecentChangesFmt))
     $RecentChangesFmt = $DraftRecentChangesFmt;
 }
-
-

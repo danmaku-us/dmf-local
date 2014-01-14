@@ -1,5 +1,0 @@
-RewriteEngine on
-RewriteBase /static/players
-
-RewriteRule ^player([^/]*)\.swf$ ac/player$1.swf     [L]
-RewriteRule ^bi([^/]*)\.swf$     bi/bi$1.swf         [L]

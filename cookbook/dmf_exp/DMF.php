@@ -145,7 +145,7 @@ include_once(DMF_ROOT_PATH."inc/class.VideoSource.php");
 include_once(DMF_ROOT_PATH."inc/action.SetDefaultPlayer.php");
 if (file_exists(DMF_ROOT_PATH."DMF_Version.php")) 
     include_once(DMF_ROOT_PATH."DMF_Version.php");
-Player::$playerBase = $ScriptUrl.'/pub/players/';
+Player::$playerBase = $ScriptUrl.'/pub/dmf/players/';
 SafeEnum::Create('PoolMode', 'S', 'D', 'A');
 SafeEnum::Create("XmlErrorType", "NoError", "Auth", "Broken");
 
@@ -173,7 +173,7 @@ if ($LOCALVERSION) {
 	$HandleAuth['dmpost'] = 'admin`';
 }
 //$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,qule.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,pdm-bili.js"></script>'."\n";
-$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub&amp;f=jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,jq.bilibili.js,page.arc.js"></script>'."\n";
+$HTMLHeaderFmt['javascripts'] = "\n".'<script type="text/javascript" src="/pub/min/?b=pub/dmf&amp;f=jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js,jq.bilibili.js,page.arc.js"></script>'."\n";
 
 
 //处理投稿请求

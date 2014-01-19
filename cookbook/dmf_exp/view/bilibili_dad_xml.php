@@ -6,7 +6,7 @@
 <user>123</user>
 <scores>999</scores>
 <money>999</money>
-<face>/pub/blank.gif</face>
+<face>/pub/dmf/blank.gif</face>
 <pwd>12345678</pwd>
 <isadmin>true</isadmin>
 <permission><?php echo $AuthLevelString;?></permission>

@@ -10,7 +10,7 @@ class Dpi extends K_Controller {
     public function getconfigxml($para1, $para2 = null)
     {
         if ($para2 == null) return $this->forbidden();
-        $file = './static/page/'.md5(substr($para2,0,-4)).'.xml';
+        $file = './pub/dmf/2dlandcache/'.md5(substr($para2,0,-4)).'.xml';
         echo file_get_contents($file);exit;
     }
     

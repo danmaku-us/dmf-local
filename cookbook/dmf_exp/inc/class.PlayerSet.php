@@ -51,7 +51,7 @@ class PlayerSet extends Set
 	public static function GetPlayerDir($gs)
 	{
         global $FarmD;
-        return "{$FarmD}/pub/players/$gs";
+        return "{$FarmD}/pub/dmf/players/$gs";
 	}
 }
 

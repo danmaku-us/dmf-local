@@ -43,9 +43,9 @@ $BlocklistDownload["$SiteAdminGroup.Blocklist-MoinMaster"] = array(
 # END
 
 # 页面储存
-$WikiDir = new PageStore('./wiki.d/{$Group}/{$FullName}');
+$WikiDir = new PageStore('$FarmD/wiki.d/{$Group}/{$FullName}');
 $WikiLibDirs = array( &$WikiDir,
-	new PageStore('$FarmD/dmf/dmflib.d/{$Group}/$FullName'),
+	new PageStore('$FarmD/pub/dmf/dmflib.d/{$Group}/$FullName'),
 	new PageStore('$FarmD/wikilib.d/$FullName')
 );
 # END

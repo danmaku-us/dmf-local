@@ -1,11 +1,12 @@
-version=pmwiki-2.1.10 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.4) Gecko/20060508 Firefox/1.5.0.4
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
 author=lijian
+charset=UTF-8
 csum=
 ctime=1149850058
-host=210.83.223.45
+host=::1
 name=PmWikiZhCn.Installation
-rev=1
+rev=2
 targets=
-text=这是一个测试
-time=1149850058
+text=è¿™æ˜¯ä¸€ä¸ªæµ‹è¯•
+time=1390176356

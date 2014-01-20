@@ -1,8 +1,9 @@
-version=pmwiki-2.2.24 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; rv:2.0.1) Gecko/20100101 Firefox/4.0.1
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
+charset=UTF-8
 ctime=1305539607
 host=::1
 name=LocalVideo.RecentChanges
-rev=1
-text=* [[LocalVideo/LocalVideo]]  . . . 2011 年 05 月 16 日, 17:53  被 [[~Admin]]: [==]%0a
-time=1305539607
+rev=2
+text=* [[LocalVideo/LocalVideo]]  . . . 2011 å¹´ 05 æœˆ 16 æ—¥, 17:53  è¢« [[~Admin]]: [==]%0a
+time=1390176344

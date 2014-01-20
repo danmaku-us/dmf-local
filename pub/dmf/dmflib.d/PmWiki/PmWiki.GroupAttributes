@@ -1,8 +1,9 @@
-version=pmwiki-2.2.19 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-CN; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729; .NET4.0E)
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
+charset=UTF-8
 ctime=1297355062
-host=114.243.82.203
+host=::1
 name=PmWiki.GroupAttributes
 passwdedit=@lock
-rev=1
-time=1297355062
+rev=2
+time=1390176344

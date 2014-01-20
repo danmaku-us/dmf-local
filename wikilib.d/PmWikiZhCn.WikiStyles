@@ -1,11 +1,12 @@
-version=pmwiki-2.2.0-beta42 ordered=1 urlencoded=1
-agent=Opera/9.10 (Windows NT 5.1; U; zh-cn)
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
 author=
+charset=UTF-8
 csum=
 ctime=1175915158
-host=222.248.69.252
+host=::1
 name=PmWikiZhCn.WikiStyles
-rev=1
+rev=2
 targets=PmWikiZhCn.WikiStyles
-text=[[WikiStyles]] 允许 %25red%25 红色%0a%25blue%25 蓝色 %25green%25 绿色%0a%25color=#ff7f00%25 特定颜色 %25%25等不同颜色.
-time=1175915158
+text=[[WikiStyles]] å…è®¸ %25red%25 çº¢è‰²%0a%25blue%25 è“è‰² %25green%25 ç»¿è‰²%0a%25color=#ff7f00%25 ç‰¹å®šé¢œè‰² %25%25ç­‰ä¸åŒé¢œè‰².
+time=1390176356

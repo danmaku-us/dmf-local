@@ -1,11 +1,12 @@
-version=pmwiki-2.1.3 ordered=1 urlencoded=1
-agent=Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; Alexa Toolbar)
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
 author=
+charset=UTF-8
 csum=
 ctime=1143469435
-host=219.150.164.125
+host=::1
 name=PmWikiZhCn.CleanUrls
-rev=1
+rev=2
 targets=
-text=关于pmwiki如何改变路径的问题，我只找到了Apache server下的修改方法，哪位能告诉我在win2003 is下如何获得改变路径方法？用ISAPI_Rewrite 应该可以，但是不会写路径。
-time=1143469435
+text=å…³äºŽpmwikiå¦‚ä½•æ”¹å˜è·¯å¾„çš„é—®é¢˜ï¼Œæˆ‘åªæ‰¾åˆ°äº†Apache serverä¸‹çš„ä¿®æ”¹æ–¹æ³•ï¼Œå“ªä½èƒ½å‘Šè¯‰æˆ‘åœ¨win2003 isä¸‹å¦‚ä½•èŽ·å¾—æ”¹å˜è·¯å¾„æ–¹æ³•ï¼Ÿç”¨ISAPI_Rewrite åº”è¯¥å¯ä»¥ï¼Œä½†æ˜¯ä¸ä¼šå†™è·¯å¾„ã€‚
+time=1390176356

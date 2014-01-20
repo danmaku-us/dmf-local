@@ -1,8 +1,9 @@
-version=pmwiki-2.2.27 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
+charset=UTF-8
 ctime=1295592350
-host=127.0.0.1
+host=::1
 name=API.RecentChanges
-rev=6
-text=* [[API/AcfFiltrateXml]]  . . . 2011 年 07 月 15 日, 16:48  被 ?: [==]%0a* [[API/AcfAdXml]]  . . . 2011 年 07 月 15 日, 16:45  被 ?: [==]%0a* [[API/BPadXml]]  . . . 2011 年 07 月 15 日, 16:40  被 [[~KPX]]: [==]%0a* [[API/XMLTool]]  . . . 2011 年 04 月 24 日, 21:25 GMT+0800 被 [[~Admin]]: [==]%0a* [[API/BiDMWR]]  . . . 2011 年 01 月 20 日, 11:45 下午 被 [[~aUser]]: [==]%0a
-time=1310719690
+rev=7
+text=* [[API/AcfFiltrateXml]]  . . . 2011 å¹´ 07 æœˆ 15 æ—¥, 16:48  è¢« ?: [==]%0a* [[API/AcfAdXml]]  . . . 2011 å¹´ 07 æœˆ 15 æ—¥, 16:45  è¢« ?: [==]%0a* [[API/BPadXml]]  . . . 2011 å¹´ 07 æœˆ 15 æ—¥, 16:40  è¢« [[~KPX]]: [==]%0a* [[API/XMLTool]]  . . . 2011 å¹´ 04 æœˆ 24 æ—¥, 21:25 GMT+0800 è¢« [[~Admin]]: [==]%0a* [[API/BiDMWR]]  . . . 2011 å¹´ 01 æœˆ 20 æ—¥, 11:45 ä¸‹åˆ è¢« [[~aUser]]: [==]%0a
+time=1390176344

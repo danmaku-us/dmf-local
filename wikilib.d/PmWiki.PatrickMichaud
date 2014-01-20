@@ -1,11 +1,11 @@
-version=pmwiki-2.2.30 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
 author=
 charset=UTF-8
 csum=
-host=85.171.160.186
+host=::1
 name=PmWiki.PatrickMichaud
-rev=15
+rev=16
 targets=
 text=Patrick Michaud (Pm) is the author of PmWiki.  More information about him can be found at http://www.pmichaud.com.
-time=1315670897
+time=1390176356

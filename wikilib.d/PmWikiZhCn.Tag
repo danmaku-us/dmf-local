@@ -1,11 +1,12 @@
-version=pmwiki-2.1.3 ordered=1 urlencoded=1
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
 author=EAY
+charset=UTF-8
 csum=
 ctime=1142945934
-host=58.33.157.103
+host=::1
 name=PmWikiZhCn.Tag
-rev=1
+rev=2
 targets=
 text=http://www.yehuo.com
-time=1142945934
+time=1390176356

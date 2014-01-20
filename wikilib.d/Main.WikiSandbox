@@ -1,9 +1,8 @@
-version=pmwiki-2.0.devel1
-newline=²
-version=pmwiki-2.0.devel1
-text=Feel free to use this page to experiment with the [[PmWiki/Text Formatting Rules]].  Just click the "Edit Page" link at the bottom of the page.²----²
-time=1093548433
+version=pmwiki-2.2.58 ordered=1 urlencoded=1
+agent=Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.29 Safari/537.36
+charset=UTF-8
+host=::1
 name=Main.WikiSandbox
-host=24.1.26.221
-agent=Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7) Gecko/20040707 Firefox/0.8
-rev=3
+rev=4
+text=Feel free to use this page to experiment with the [[PmWiki/Text Formatting Rules]].  Just click the "Edit Page" link at the bottom of the page.%0a----%0a
+time=1390176356

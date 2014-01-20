@@ -1,0 +1,6 @@
+{
+    "targetConfig": "Bilibili2",
+    "targetMinVer": "0",
+    "cmtFormats"     : [ "d", "data", "raw" ],
+    "videoFormats": [ "sina", "local", "url"]
+}

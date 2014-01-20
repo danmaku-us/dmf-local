@@ -3,16 +3,16 @@ abstract class BasicEnum {
     private static $constCache = NULL;
 
     private static function getConstants() {
-        if (self$constCache === NULL) {
+        if (self::$constCache === NULL) {
             $reflect = new ReflectionClass(get_called_class());
-            self$constCache = $reflect-getConstants();
+            self::$constCache = $reflect-getConstants();
         }
 
-        return self$constCache;
+        return self::$constCache;
     }
 
     public static function isValidName($name, $strict = false) {
-        $constants = selfgetConstants();
+        $constants = self::getConstants();
 
         if ($strict) {
             return array_key_exists($name, $constants);
@@ -23,7 +23,7 @@ abstract class BasicEnum {
     }
 
     public static function isValidValue($value) {
-        $values = array_values(selfgetConstants());
+        $values = array_values(self::getConstants());
         return in_array($value, $values, $strict = true);
     }
 }

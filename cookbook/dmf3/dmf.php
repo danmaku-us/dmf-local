@@ -5,15 +5,15 @@ define("DMF_PUB__PATH", "./pub/dmf/");
 include_once(DMF_ROOT_PATH."/includes/FirePHP/FirePHP.class.php");
 include_once(DMF_ROOT_PATH."/includes/FirePHP/fb.php");
 include_once(DMF_ROOT_PATH."/dmf.config.php");
-if (file_exists(DMF_ROOT_PATH."dmf.version.php")) 
-    include_once(DMF_ROOT_PATH."dmf.version.php");
+if (file_exists(DMF_ROOT_PATH."/dmf.version.php")) 
+    include_once(DMF_ROOT_PATH."/dmf.version.php");
     
 //设置自动加载器
-function __autoload($class)
-{
-    $parts = explode('\\', $class);
-    require end($parts) . '.php';
-}
+spl_autoload_register(function ($class) {
+    $p = DMF_ROOT_PATH."/includes/{$class}.php";
+    if (file_exists($p)) 
+        include($p);
+});
 
 include_once(DMF_ROOT_PATH."/dmf.pmwiki.php");
 include_once(DMF_ROOT_PATH."/mvc/dmf.mvc.php");
@@ -25,3 +25,6 @@ if ( !(bool)preg_match("/^\/([A-Z0-9\xa0-\xff\?].*)/", $_SERVER['REQUEST_URI'])
     //$EnableCodeIgniter = TRUE;
     $action = 'mvc';
 }
+
+if (file_exists(DMF_ROOT_PATH."/dmf.test.php")) 
+    include_once(DMF_ROOT_PATH."/dmf.test.php");

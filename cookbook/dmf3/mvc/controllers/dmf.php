@@ -8,7 +8,7 @@ class Dmf extends K_Controller {
         
         $AllowedFileType = array("flv", "mp4", "m4a", "m4r", "m4v", "hlv", "mp3");
         $BaseUrl = 'http://localhost/uploads/LocalVideo/';
-        $D = "./uploads/LocalVideo";
+        $D = $FarmD."/uploads/LocalVideo";
         
         $localD = opendir($D);
         while ( ($file = readdir($localD)) !== false ) {

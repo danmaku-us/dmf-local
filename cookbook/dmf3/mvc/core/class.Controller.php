@@ -15,7 +15,7 @@ class K_Controller {
             $$k = $v;
         }
         
-        $p = MVC_PATH."/$folder/{$file}.php";
+        $p = DMF_MVC__PATH."/$folder/{$file}.php";
         if (file_exists($p)) {
             include($p);
         } else {
@@ -24,15 +24,15 @@ class K_Controller {
     }
     
     protected function Helper($name) {
-        $this->_loadFile('helper', $name);
+        $this->_loadFile('helpers', $name);
     }
     
     protected function DisplayView($viewName, $vars = array()) {
-        $this->_loadFile('view', $viewName, $vars);
+        $this->_loadFile('views', $viewName, $vars);
     }
     
     protected function DisplayStatic($name) {
-        $p = MVC_PATH."/static/{$name}";
+        $p = DMF_MVC__PATH."/static/{$name}";
         if (file_exists($p)) {
             include($p);
         } else {

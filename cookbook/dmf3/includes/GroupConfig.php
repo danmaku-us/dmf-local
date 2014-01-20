@@ -14,6 +14,7 @@ abstract class GroupConfig
     public static function GetVersion() { return static::$Version;}
 
     public function GetGroupName() { return $this->groupName; }
+    public function GetDesc() { return $this->configJson->desc; }
     
     public function GetCommentFormats() {
         return $this->configJson->cmtFormats;

@@ -7,7 +7,7 @@ final class ConfigJson
 	//@param $json JSON输入，decode时需要为ASSOC_ARRAY格式
 	public function __construct($json)
 	{
-		$fields = array("targetConfig","targetMinVer","cmtFormats","videoFormats");
+		$fields = array("desc","targetConfig","targetMinVer","cmtFormats","videoFormats");
 		$valid = $this->hasRequired($json, $fields);
 		if (!$valid) {
 			throw new Exception("Error Processing Config Json");

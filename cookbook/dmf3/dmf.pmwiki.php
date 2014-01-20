@@ -18,11 +18,24 @@ if ($LOCALVERSION) {
 	$HandleAuth['dmpost'] = 'admin`';
 }
 
+Markup("SideBarLoader", 'directives',
+    '/DMFSideBarLoader_CONFIRM_DMFSideBarLoader/',
+    DMF_SideBarLoader());
+    
+function DMF_SideBarLoader() {
+    $manager = ConfigManager::GetInstance();
+    $sb = "";
+    foreach ($manager->ToArray() as $Group => $Config) {
+        $sb .= "* &nbsp;[[{$Group}/HomePage|{$Config->GetDesc()}]]\r\n";
+    }
+    return $sb;
+}
+
 //页面加载
 Markup("PlayerPageLoader", 'directives',
     '/DMFPLAYERDATA_(.*)_DMFPLAYERDATA/ms',
     'DMF_PlayerPageDisplay()');
-
+    
 function PlayerPageLoader($jsonText) {
     $json = json_decode($jsonText);
     

@@ -11,6 +11,11 @@ class ConfigManager extends Singleton {
         }
     }
     
+    public function ToArray() {
+        return $this->configInstance;
+    }
+    
+    
     private function fromFile($fp)
     {
         if (!file_exists($fp)) {

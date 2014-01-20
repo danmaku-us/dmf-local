@@ -11,9 +11,9 @@ class DefaultController extends K_Controller {
     
     public function try_getFile() {
         $p = $this->Router->toPath();
-        Utils::WriteLog("DefaultController::try_getFile()", "Tried to redirect {$this->Input->Server->REQUEST_URI} to {$p}");
+        FB::error("DefaultController::try_getFile() Tried to redirect {$this->Input->Server->REQUEST_URI} to {$p}");
         if (file_exists($p)) {
-            Header("Url_Router_Stats : {$this->Input->Server->REQUEST_URI} => {$p}");
+            FB:info("Url_Router_Stats : {$this->Input->Server->REQUEST_URI} => {$p}");
             Header("Content-Type: application/octet-stream");
             include($p);
             exit;

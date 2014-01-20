@@ -1,6 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
 //加载&注册MVC相关内容
-
 define("DMF_MVC__PATH", dirname(__FILE__));
 
 spl_autoload_register(function ($class) {

@@ -1,38 +1,42 @@
 <?php if (!defined('PmWiki')) exit();
-//{$groupName}.json
-final class ConfigJson
+abstract class ConfigJson
 {
-	private $json = array();
+	protected $json = array();
 
 	//@param $json JSON输入，decode时需要为ASSOC_ARRAY格式
 	public function __construct($json)
 	{
-		$fields = array("desc","targetConfig","targetMinVer","cmtFormats","videoFormats");
-		$valid = $this->hasRequired($json, $fields);
-		if (!$valid) {
-			throw new Exception("Error Processing Config Json");
+		if (!is_array($json)) {
+			throw new Exception("Bad input!");
 		}
 
+		$result = $this->Validate($json);
+		if ($result !== true) {
+			throw new Exception("Validate fail on {$result}");
+		}
 		$this->json = $json;
-		//foreach ($json as $key => $value) {
-		//	$this->json[strtolower($key)] = $value;
-		//}
 	}
+
+	//检查输入的json是否符合规范。
+	//返回bool
+	protected abstract function Validate($json);
 
 	public function __get($key)
 	{
-		if (!array_key_exists($key, $this->json)) {
+		if (array_key_exists($key, $this->json)) {
+			return $this->json[$key];
+		} else if (property_exists($this, $key)) {
+			return $this->$key;
+		} else {
 			throw new Exception("找不到属性{$key}");
-			
 		}
-		return $this->json[$key];
 	}
 
-	private function hasRequired($arr, $keys)
+	protected function hasRequired($arr, $keys)
 	{
 		foreach ($keys as $key) {
 			if (!array_key_exists($key, $arr)) {
-				return false;
+				return $key;
 			}
 		}
 		return true;

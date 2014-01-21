@@ -5,7 +5,7 @@ class ConfigManager extends Singleton {
     protected function __construct()
     {
         parent::__construct();
-        $files = find(DMF_PUB__PATH."/groups/", "*.json");
+        $files = PathUtils::FindFiles(DMF_PUB__PATH."/groups/", "*.json");
         foreach ($files as $file) {
             $this->fromFile($file);
         }
@@ -22,7 +22,7 @@ class ConfigManager extends Singleton {
             throw new Exception("Config file not found: {$fp}.");
         }
 
-        $json = new ConfigJson(json_decode(file_get_contents($fp), true));
+        $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
         $className = "{$json->targetConfig}BaseConfig";
 
         //版本检查
@@ -48,18 +48,3 @@ class ConfigManager extends Singleton {
     
 }
 
-function find($dir, $pattern){
-    // escape any character in a string that might be used to trick
-    // a shell command into executing arbitrary commands
-    $dir = escapeshellcmd($dir);
-    // get a list of all matching files in the current directory
-    $files = glob("$dir/$pattern");
-    // find a list of all directories in the current directory
-    // directories beginning with a dot are also included
-    foreach (glob("$dir/{.[^.]*,*}", GLOB_BRACE|GLOB_ONLYDIR) as $sub_dir){
-        $arr   = find($sub_dir, $pattern);  // resursive call
-        $files = array_merge($files, $arr); // merge array with files from subdirectory
-    }
-    // return all found files
-    return $files;
-}

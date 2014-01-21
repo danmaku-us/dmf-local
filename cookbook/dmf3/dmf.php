@@ -1,6 +1,7 @@
 <?php if (!defined('PmWiki')) exit();
 define("DMF_ROOT_PATH", __DIR__);
-define("DMF_PUB__PATH", "./pub/dmf/");
+define("DMF_PUB__PATH", "pub/dmf");
+define("DMF_VERSION", 0);
 
 include_once(DMF_ROOT_PATH."/includes/FirePHP/FirePHP.class.php");
 include_once(DMF_ROOT_PATH."/includes/FirePHP/fb.php");

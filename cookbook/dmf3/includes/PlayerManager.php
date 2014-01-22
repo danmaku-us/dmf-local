@@ -25,7 +25,7 @@ final class PlayerManager extends Singleton {
 
 	public function GetDefault($groupName)
 	{
-
+		throw new Exception("Not Implemented");
 	}
 
     public function __get($groupName)

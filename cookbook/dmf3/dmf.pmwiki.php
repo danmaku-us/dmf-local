@@ -57,6 +57,8 @@ $UploadMaxSize = 1000000;
 $EnableUploadVersions=1;
 SDV($UploadExts['xml'], 'text/xml');
 
+//历史控制
+SDV($DiffKeepDays, 7);
 //AllGroupHeader
 $GroupHeaderFmt =
   '(:include {$SiteGroup}.AllGroupHeader:)(:nl:)'

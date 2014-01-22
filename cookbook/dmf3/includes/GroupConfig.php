@@ -3,29 +3,42 @@
 abstract class GroupConfig
 {
     protected $groupName;
-    protected $configJson;
+    protected $config;
     
-    protected function __construct($groupName, $jsondata)
+    protected function __construct($groupName,GroupConfigJson $config)
     {
         $this->groupName  = $groupName;
-        $this->configJson = $jsondata;
+        $this->config = $config;
     }
         
     public static function GetVersion() { return static::$Version;}
 
     public function GetGroupName() { return $this->groupName; }
-    public function GetDesc() { return $this->configJson->desc; }
     
-    public function GetCommentFormats() {
-        return $this->configJson->cmtFormats;
-    }
+    public function GetDesc() { return $this->config->desc; }
     
-    public function GetPrefix() {
-        return $this->GetGroupName();
+    public function GetCommentFormats() { return $this->config->cmtFormats; }
+    
+    public function GetPrefix() { return $this->GetGroupName(); }
+    
+    public function GetReferencedJS() {
+        $arr = array();
+        $dir = $this->getJavascriptDir();
+        foreach ($this->config->javascripts as $jsfn) {
+            $fp = "{$dir}/$jsfn";
+            if (!file_exists($fp)) {
+                throw new Exception("找不到引用的文件{$fp}");
+            }
+            $arr[]  = "{$dir}/$jsfn";
+        }
+        return $arr;
     }
     
     public abstract function CmtUploadPreprocess($str);
     
     public abstract function GenerateFlashVarArr($source);
     
+    private function getJavascriptDir() {
+        return DMF_PUB__PATH . "/javascripts/" . substr(get_class($this), 0, -4);
+    }
 }

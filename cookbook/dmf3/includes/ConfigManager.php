@@ -11,7 +11,13 @@ class ConfigManager extends Singleton {
         }
     }
     
-    public function ToArray() {
+    public function FindByGroupName($name)
+    {
+        return $this->$name;
+    }
+    
+    public function ToArray()
+    {
         return $this->configInstance;
     }
     
@@ -23,11 +29,11 @@ class ConfigManager extends Singleton {
         }
 
         $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
-        $className = "{$json->targetConfig}BaseConfig";
+        $className = "{$json->targetconfig}Base";
 
         //版本检查
         $version = intval($className::GetVersion());
-        $reqver  = intval($json->targetMinVer);
+        $reqver  = intval($json->targetvermin);
         if ($version < $reqver) {
             throw new Exception("Baseclass version mismatch : {$fp}.");
         }
@@ -42,7 +48,7 @@ class ConfigManager extends Singleton {
         if (array_key_exists($key, $this->configInstance)) {
             return $this->configInstance[$key];
         } else {
-            throw new Exception("找不到");
+            throw new Exception("找不到{$groupName}");
         }
     }
     

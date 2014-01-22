@@ -61,8 +61,24 @@ SDV($UploadExts['xml'], 'text/xml');
 SDV($DiffKeepDays, 7);
 //AllGroupHeader
 $GroupHeaderFmt =
-  '(:include {$SiteGroup}.AllGroupHeader:)(:nl:)'
-  .'(:include {$Group}.GroupHeader:)(:nl:)';
+    '(:include {$SiteGroup}.AllGroupHeader:)(:nl:)'
+    .'(:include {$Group}.GroupHeader:)(:nl:)';
+  
+$HTMLHeaderFmt['javascripts'] = 
+    "\n<script type=\"text/javascript\" src=\"/pub/min/?b=pub/dmf&amp;f="
+    ."jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js"
+    ."\"></script>\n";
 
-
-
+if ($action == "browse") {
+    try {
+        $DMF_g = PageVar($pagename, '$Group');
+        $DMF_config = ConfigManager::GetInstance()->$DMF_g;
+        foreach ($DMF_config->GetReferencedJS() as $DMF_jsfp) {
+            $HTMLHeaderFmt['javascripts'] .=
+                "<script type=\"text/javascript\" src=\"/{$DMF_jsfp}\"></script>\n";
+        }
+    } catch (Exception $e) {
+        unset($DMF_g, $DMF_config, $DMF_jsfp);
+    }
+    unset($DMF_g, $DMF_config, $DMF_jsfp);
+}

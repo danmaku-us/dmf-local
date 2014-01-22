@@ -1,7 +1,9 @@
 {
-    "desc"        : "Bilibili  (β4)",
-    "targetConfig": "Bilibili2",
-    "targetMinVer": "0",
-    "cmtFormats"  : [ "d", "data", "raw" ],
-    "videoFormats": [ "sina", "local", "url"]
+    "desc"          : "Bilibili  (β4)",
+    "targetconfig"  : "BilibiliCfgV2",
+    "targetvermin"  : 0,
+    "dmfspecvermin" : 1,
+    "cmtformats"    : [ "d", "data", "raw" ],
+    "videoformats"  : [ "sina", "local", "url"],
+    "javascripts"   : [ "jq.bilibili.js", "page.arc.js" ]
 }

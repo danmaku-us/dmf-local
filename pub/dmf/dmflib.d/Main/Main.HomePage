@@ -8,5 +8,5 @@ host=::1
 name=Main.HomePage
 rev=261
 targets=
-text=(:if enabled LOCALVERSION:)%0a任何建议和bug汇报请发送dm.mikufans@gmail.com%0a%0abug汇报最好附带wiki.d目录的打包。弹幕错误再加对应XMl文件。%0a(:else:)%0a%0a(:ifend:)%0a%0a本站运行于DMF : {$DMFVersion} {$Version}.%0a%25white%25 蓝白弹幕祭, 拜年祭认证产品%25%25
+text=(:if enabled LOCALVERSION:)%0a任何建议和bug汇报请发送dm.mikufans@gmail.com%0a%0abug汇报最好附带wiki.d目录的打包。弹幕错误再加对应XMl文件。%0a(:else:)%0a%0a(:ifend:)%0a%0a版本：{$DMFVersion} {$Version}.%0a%25white%25 蓝白弹幕祭, 拜年祭认证产品%25%25
 time=1390176344

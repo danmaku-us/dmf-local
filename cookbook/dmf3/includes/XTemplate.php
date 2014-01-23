@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('PmWiki')) exit();
 
 // When developing uncomment the line below, re-comment before making public
 //error_reporting(E_ALL);

@@ -17,7 +17,7 @@ abstract class GroupConfig
     
     public function GetDesc() { return $this->config->desc; }
     
-    public function GetCommentFormats() { return $this->config->cmtFormats; }
+    public function GetCommentFormats() { return $this->config->cmtformats; }
     
     public function GetPrefix() { return $this->GetGroupName(); }
     
@@ -36,7 +36,7 @@ abstract class GroupConfig
     
     public abstract function CmtUploadPreprocess($str);
     
-    public abstract function GenerateFlashVarArr($source);
+    public abstract function GenerateFlashVarArr(VideoInfo $source);
     
     private function getJavascriptDir() {
         return DMF_PUB__PATH . "/javascripts/" . substr(get_class($this), 0, -4);

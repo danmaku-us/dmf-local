@@ -21,6 +21,20 @@ class ConfigManager extends Singleton {
         return $this->configInstance;
     }
     
+    public static function Get($groupName) {
+        $inst = self::GetInstance();
+        return $inst->$groupName;
+    }
+    
+    public function __get($groupName)
+    {
+        $key = strtolower($groupName);
+        if (array_key_exists($key, $this->configInstance)) {
+            return $this->configInstance[$key];
+        } else {
+            throw new Exception("找不到{$groupName}");
+        }
+    }
     
     private function fromFile($fp)
     {
@@ -42,15 +56,6 @@ class ConfigManager extends Singleton {
         $this->configInstance[strtolower($groupName)] = new $className($groupName, $json);
     }
     
-    public function __get($groupName)
-    {
-        $key = strtolower($groupName);
-        if (array_key_exists($key, $this->configInstance)) {
-            return $this->configInstance[$key];
-        } else {
-            throw new Exception("找不到{$groupName}");
-        }
-    }
     
 }
 

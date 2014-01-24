@@ -31,7 +31,7 @@ function DMF_SideBarLoader() {
     return $sb;
 }
 
-include(DMF_ROOT_PATH."/dmf.pmwiki.pageloader.php");
+include_once(DMF_ROOT_PATH."/dmf.pmwiki.pageloader.php");
 
 //上传
 $EnableUpload = 1;

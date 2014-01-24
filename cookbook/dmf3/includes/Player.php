@@ -7,10 +7,12 @@
 //version
 final class Player extends ConfigJson
 {
-	private $swffile;
-	private $jsonfile;
+	protected $swffile;
+	protected $jsonfile;
 	protected $id;
-
+    protected $group;
+    protected $url;
+    
 	public function __construct($swffile)
 	{
 		$this->jsonfile = $jsonFile = substr($swffile, 0, -3)."json";
@@ -18,7 +20,8 @@ final class Player extends ConfigJson
 		parent::__construct($json);
 		$this->id = basename($swffile, ".swf");
 		$this->swffile = $swffile;
-
+        $this->group   = basename(dirname($swffile));
+        $this->url     = "/{$this->swffile}";
 	}
 
 	protected function Validate($json) {

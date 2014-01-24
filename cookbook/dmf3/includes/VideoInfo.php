@@ -73,7 +73,20 @@ final class VideoInfo extends ConfigJson
     {
         $manager = PlayerManager::GetInstance();
         $players = $manager->GetPlayers($this->group);
+        $arr = array(
+            'current' => null,
+            'others'  => array()
+            );
 
+        $currentPlayer = $this->GetCurrentPlayer();
+        foreach ($players as $id => $player) {
+            if ($player = $currentPlayer) {
+                $arr['current'] = $player;
+            } else {
+                $arr['others'][$id] = $player;
+            }
+        }
+        return $arr;
     }
 
     public function GetCurrentPlayer()

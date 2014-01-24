@@ -122,34 +122,23 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
         "WIDTH"  => $player->width));
 
 
-    $isAdmin = CondAuth($pagename, 'admin');
-
     //播放器选择
-    /*
-    foreach ($VDN->GroupConfig->PlayersSet as $playerId => $playerObj)
-    {
-        if ($playerId == 'default')
-        {
-            continue;
-        }
-        
-        if ($VDN->Player->playerUrl == $playerObj->playerUrl)
-        {
-            $xtpl->assign("NAME", $playerObj->desc);
-            $xtpl->parse("main.PlayerLoaderCurrent");
-            continue;
-        }
-        $player = array(
-            "Name" => $playerObj->desc,
-            "URL" => "?Player=$playerId",
-            "SetDefaultUrl" => "?Player=$playerId?&action=setdef");
-        $xtpl->assign("PLAYER", $player);
-        if ($isAdmin)  {
-            $xtpl->parse("main.PlayerLoaderAdmin");
-        } else {
-            $xtpl->parse("main.PlayerLoaderNormal");
-        }
-    }*/
+    $pinfo = $videocfg->GetPlayerInfo();
+    $builder('parse', 'main.PlayerLoaderCurrent',
+            array('NAME' => $pinfo['current']->desc));
+
+    $isAdmin = CondAuth($pagename, 'admin');
+    foreach ($pinfo['others'] as $id => $player) {
+        $arr = array(
+            'Name' => $player->desc,
+            'URL'  => $player->url,
+            'SetDefaultUrl' => "?Player={$id}?&action=setdef");
+        $builder('parse',
+                ($isAdmin)
+                    ? "main.PlayerLoaderAdmin"
+                    : "main.PlayerLoaderNormal",
+                array('PLAYER' => $arr));
+    }
 
     //分P信息
     $partText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#partinfo#partend'));

@@ -28,6 +28,7 @@ final class PlayerManager extends Singleton {
                 $arr[$name] = $player;
             }
         }
+        return $arr;
     }
 
 	public function GetDefault($groupName)

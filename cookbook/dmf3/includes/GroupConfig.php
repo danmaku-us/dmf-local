@@ -2,6 +2,7 @@
 //{$groupName}.json
 abstract class GroupConfig
 {
+    protected $desc;
     protected $groupName;
     protected $config;
     
@@ -18,25 +19,16 @@ abstract class GroupConfig
 
         $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
         $className = "{$json->targetconfig}Base";
-        
-        //版本检查
-        $version = intval($className::GetVersion());
-        $reqver  = intval($json->targetvermin);
-        if ($version < $reqver) {
-            throw new Exception("Baseclass version mismatch : {$fp}.");
-        }
-        
+                
         $targetGroupName = basename($fp, ".json");
         return new $className($targetGroupName, $json);
     }
     
-    public static function GetVersion() { return static::$Version;}
-
     public function GetGroupName() { return $this->groupName; }
     
     public function GetDesc() { return $this->config->desc; }
     
-    public function GetCommentFormats() { return $this->config->cmtformats; }
+    public function GetCommentFormats() { return $this->cmtformats; }
     
     public function GetPrefix() { return $this->GetGroupName(); }
     
@@ -47,7 +39,7 @@ abstract class GroupConfig
     public function GetReferencedJS() {
         $arr = array();
         $dir = $this->getJavascriptDir();
-        foreach ($this->config->javascripts as $jsfn) {
+        foreach ($this->javascripts as $jsfn) {
             $fp = "{$dir}/$jsfn";
             if (!file_exists($fp)) {
                 throw new Exception("找不到引用的文件{$fp}");

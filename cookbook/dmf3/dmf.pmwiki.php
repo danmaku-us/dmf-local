@@ -23,7 +23,7 @@ Markup("SideBarLoader", 'directives',
     DMF_SideBarLoader());
     
 function DMF_SideBarLoader() {
-    $manager = ConfigManager::GetInstance();
+    $manager = GroupConfigManager::GetInstance();
     $sb = "";
     foreach ($manager->ToArray() as $Group => $Config) {
         $sb .= "* &nbsp;[[{$Group}/HomePage|{$Group} {$Config->GetDesc()}]]\r\n";
@@ -54,7 +54,7 @@ $HTMLHeaderFmt['javascripts'] =
 if ($action == "browse") {
     try {
         $DMF_g = PageVar($pagename, '$Group');
-        $DMF_config = ConfigManager::GetInstance()->$DMF_g;
+        $DMF_config = GroupConfigManager::GetInstance()->$DMF_g;
         foreach ($DMF_config->GetReferencedJS() as $DMF_jsfp) {
             $HTMLHeaderFmt['javascripts'] .=
                 "<script type=\"text/javascript\" src=\"/{$DMF_jsfp}\"></script>\n";

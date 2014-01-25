@@ -11,12 +11,7 @@ final class GroupConfigJson extends ConfigJson
 	public function Validate($json) {
 		$fields = array(
                     "desc",
-                    "targetconfig",
-                    "targetvermin",
-                    "dmfspecvermin",
-                    "cmtformats",
-                    "videoformats",
-                    "javascripts");
+                    "targetconfig");
 		return $this->hasRequired($json, $fields);
 	}
 

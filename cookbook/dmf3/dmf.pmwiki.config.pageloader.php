@@ -2,7 +2,7 @@
 
 function GetAllDMFGroups() {
     $arr = array();
-    $manager = ConfigManager::GetInstance();
+    $manager = GroupConfigManager::GetInstance();
     foreach (listpages('/.*\.GroupFooter/') as $pagename) {
         $groupname = substr($pagename, 0, -12);
         $manager->IsDMFGroup($groupname);

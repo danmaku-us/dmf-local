@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-class ConfigManager extends Singleton {
+class GroupConfigManager extends Singleton {
     private $configInstance = array();
     
     protected function __construct()

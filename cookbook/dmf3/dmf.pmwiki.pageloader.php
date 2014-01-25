@@ -65,7 +65,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
 
     $pagename = $videocfg->pagename;
     $group    = $videocfg->group;
-    $gcfg     = ConfigManager::Get($group);
+    $gcfg     = GroupConfigManager::Get($group);
 
     $config = array();
     $builder = function ($action, $name, $data = array()) use (&$config) {

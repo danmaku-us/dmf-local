@@ -1,9 +1,15 @@
 <?php if (!defined('PmWiki')) exit();
 class BilibiliCfgV2Base extends GroupConfig
 {
-    public static $Version = 0;
-    
-    public function __construct($groupName,GroupConfigJson $config)
+    protected $cmtFormats   = array("d", "data", "raw");
+    protected $videoFormats = array("sina", "local", "url");
+    protected $javascripts  = array("jq.bilibili.js", "page.arc.js");
+    //继承
+    //$config;
+    //$config->desc;
+    //$config->targetconfig;
+    //$groupName;
+    public function __construct($groupName, GroupConfigJson $config)
     {
         parent::__construct($groupName, $config);
     }

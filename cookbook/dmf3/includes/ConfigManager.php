@@ -11,6 +11,12 @@ class ConfigManager extends Singleton {
         }
     }
     
+    public function IsDMFGroup($groupname)
+    {
+        return array_key_exists(strtolower($groupname), $this->configInstance);
+    }
+    
+    
     public function FindByGroupName($name)
     {
         return $this->$name;

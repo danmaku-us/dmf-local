@@ -1,0 +1,87 @@
+<!-- BEGIN: Main -->
+<!-- BEGIN: GroupConfiguration -->
+<!-- BEGIN: ShowGroupConfiguration -->
+<div class='vspace'></div>
+<h2>组配置：</h2>
+<hr />
+<table border='0' id='GroupConfigurations' >
+    <tr >
+        <td  align='left'>组名</td>
+        <td  align='left'>类名</td>
+        <td  align='left'>Json文件</td>
+        <td  align='left'>描述</td>
+    </tr>
+    <!-- BEGIN: GroupItem -->
+    <tr >
+        <td  align='left'>{GroupName}</td>
+        <td  align='left'>{ClassName}</td>
+        <td  align='left'>{JsonPath}</td>
+        <td  align='left'>{DescText}</td>
+    </tr>
+    <!-- END: GroupItem -->
+</table>
+<p>tips: 更新DMF以获得新的配置文件</p>
+<!-- END: ShowGroupConfiguration -->
+<!-- BEGIN: AddGroupConfiguration -->
+<div class='vspace'></div>
+<h2>添加组</h2>
+<hr />
+<table border='0' >
+    <tr >
+        <td  align='right'>组名:</td>
+        <td  align='left'>{GroupName}<input type='text' name='username' class='inputbox' /></td>
+    </tr>
+    <tr >
+        <td  align='right'>配置id:</td>
+        <td  align='left'>
+            <select name='name' class='inputbox'>
+                <option value='value'>label</option>
+            </select>
+        </td>
+    </tr>
+    <tr >
+        <td >&nbsp;</td>
+        <td  align='left'><input type='submit' value='Log In' class='inputbutton' /></td>
+    </tr>
+</table>
+<!-- END: AddGroupConfiguration -->
+<!-- END: GroupConfiguration -->
+
+
+
+<!-- BEGIN: PlayerConfiguration -->
+<div class='vspace'></div>
+<h2>播放器配置</h2>
+<hr />
+<!-- BEGIN: GroupItem -->
+<form action='http://www.example.com' method='post'>
+    <table border='0' >
+        <tr >
+            <td  align='left'>组</td>
+            <td  align='left'>System <input type='hidden' name='group' value='login' /></td>
+        </tr>
+        <tr >
+            <td  align='left'>设置默认播放器</td>
+            <td  align='left'>
+                <select name='name' class='inputbox'>
+                    <option value='value'>label</option>
+                </select>
+            </td>
+        </tr>
+        <tr >
+            <td  align='left'>下载播放器</td>
+            <td  align='left'>
+                <select name='name' class='inputbox'>
+                    <option value='value'>label</option>
+                </select>
+            </td>
+        </tr>
+        <tr >
+            <td >&nbsp;</td>
+            <td  align='left'><input type='submit' value='Log In' class='inputbutton' /></td>
+        </tr>
+    </table>
+</form>
+<!-- BEGIN: GroupItem -->
+<!-- END: PlayerConfiguration -->
+<!-- END: Main -->

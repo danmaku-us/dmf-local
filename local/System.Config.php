@@ -1,4 +1,6 @@
-<?php
+<?php if (!defined('PmWiki')) exit();
+//exit;
+/*
 function GetAllGroupConfig() {
     $TargetGroupsConfigs = array();
     foreach (listpages('/.*\.GroupFooter/') as $pagename) {
@@ -48,3 +50,4 @@ function HandleConfigUpdate($pagename, $auth) {
     $GLOBALS['MessagesFmt'] = '配置已保存';
     HandleBrowse($pagename);
 }
+*/

@@ -1,7 +1,7 @@
 <?php if (!defined('PmWiki')) exit();
 class BilibiliCfgV2Base extends GroupConfig
 {
-    static $Version = 0;
+    public static $Version = 0;
     
     public function __construct($groupName,GroupConfigJson $config)
     {

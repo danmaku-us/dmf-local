@@ -10,7 +10,26 @@ abstract class GroupConfig
         $this->groupName  = $groupName;
         $this->config = $config;
     }
+    
+    public static function FromConfigFile($fp) {
+        if (!file_exists($fp)) {
+            throw new Exception("Config file not found: {$fp}.");
+        }
+
+        $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
+        $className = "{$json->targetconfig}Base";
         
+        //版本检查
+        $version = intval($className::GetVersion());
+        $reqver  = intval($json->targetvermin);
+        if ($version < $reqver) {
+            throw new Exception("Baseclass version mismatch : {$fp}.");
+        }
+        
+        $targetGroupName = basename($fp, ".json");
+        return new $className($targetGroupName, $json);
+    }
+    
     public static function GetVersion() { return static::$Version;}
 
     public function GetGroupName() { return $this->groupName; }
@@ -20,6 +39,9 @@ abstract class GroupConfig
     public function GetCommentFormats() { return $this->config->cmtformats; }
     
     public function GetPrefix() { return $this->GetGroupName(); }
+    
+    public function GetConfigFile() {}
+    
     
     public function GetReferencedJS() {
         $arr = array();

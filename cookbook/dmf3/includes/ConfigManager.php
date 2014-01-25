@@ -13,7 +13,7 @@ class ConfigManager extends Singleton {
     
     public function IsDMFGroup($groupname)
     {
-        return array_key_exists(strtolower($groupname), $this->configInstance);
+        return array_key_exists($groupname, $this->configInstance);
     }
     
     
@@ -44,22 +44,9 @@ class ConfigManager extends Singleton {
     
     private function fromFile($fp)
     {
-        if (!file_exists($fp)) {
-            throw new Exception("Config file not found: {$fp}.");
-        }
-
-        $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
-        $className = "{$json->targetconfig}Base";
-
-        //版本检查
-        $version = intval($className::GetVersion());
-        $reqver  = intval($json->targetvermin);
-        if ($version < $reqver) {
-            throw new Exception("Baseclass version mismatch : {$fp}.");
-        }
+        $config = GroupConfig::FromConfigFile($fp);
         
-        $groupName = basename($fp, ".json");
-        $this->configInstance[strtolower($groupName)] = new $className($groupName, $json);
+        $this->configInstance[$config->GetGroupName()] = $config;
     }
     
     

@@ -14,6 +14,10 @@ class DummyController extends K_Controller {
     
     public function emptyJsonObject() {
         die("{}");
-   }
+    }
+   
+    public function emptyXML($root) {
+        die("<{$root} />");
+    }
     
 }

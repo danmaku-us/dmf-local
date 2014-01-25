@@ -40,9 +40,10 @@ abstract class GroupConfig
     
     public function GetPrefix() { return $this->GetGroupName(); }
     
-    public function GetConfigFile() {}
-    
-    
+    public function GetConfigPath() {
+        return DMF_PUB__PATH . "/groups/" . $this->groupName . ".json";
+    }
+
     public function GetReferencedJS() {
         $arr = array();
         $dir = $this->getJavascriptDir();

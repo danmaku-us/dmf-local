@@ -1,6 +1,6 @@
 <!-- BEGIN: Main -->
 <!-- BEGIN: GroupConfiguration -->
-<!-- BEGIN: ShowGroupConfiguration -->
+<!-- BEGIN: Show -->
 <div class='vspace'></div>
 <h2>组配置：</h2>
 <hr />
@@ -9,20 +9,18 @@
         <td  align='left'>组名</td>
         <td  align='left'>类名</td>
         <td  align='left'>Json文件</td>
-        <td  align='left'>描述</td>
     </tr>
     <!-- BEGIN: GroupItem -->
     <tr >
         <td  align='left'>{GroupName}</td>
         <td  align='left'>{ClassName}</td>
         <td  align='left'>{JsonPath}</td>
-        <td  align='left'>{DescText}</td>
     </tr>
     <!-- END: GroupItem -->
 </table>
 <p>tips: 更新DMF以获得新的配置文件</p>
-<!-- END: ShowGroupConfiguration -->
-<!-- BEGIN: AddGroupConfiguration -->
+<!-- END: Show -->
+<!-- BEGIN: Add -->
 <div class='vspace'></div>
 <h2>添加组</h2>
 <hr />
@@ -35,7 +33,9 @@
         <td  align='right'>配置id:</td>
         <td  align='left'>
             <select name='name' class='inputbox'>
+                <!-- BEGIN: Item -->
                 <option value='value'>label</option>
+                <!-- BEGIN: Item -->
             </select>
         </td>
     </tr>
@@ -44,7 +44,7 @@
         <td  align='left'><input type='submit' value='Log In' class='inputbutton' /></td>
     </tr>
 </table>
-<!-- END: AddGroupConfiguration -->
+<!-- END: Add -->
 <!-- END: GroupConfiguration -->
 
 

@@ -26,7 +26,7 @@ function DMF_SideBarLoader() {
     $manager = ConfigManager::GetInstance();
     $sb = "";
     foreach ($manager->ToArray() as $Group => $Config) {
-        $sb .= "* &nbsp;[[{$Group}/HomePage|{$Config->GetDesc()}]]\r\n";
+        $sb .= "* &nbsp;[[{$Group}/HomePage|{$Group} {$Config->GetDesc()}]]\r\n";
     }
     return $sb;
 }

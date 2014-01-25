@@ -1,4 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
+//DMF_PUB__PATH/goups/{$groupName}.json
 class GroupConfigManager extends Singleton {
     private $configInstance = array();
     

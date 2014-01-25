@@ -1,15 +1,22 @@
 <?php if (!defined('PmWiki')) exit();
-//{$groupName}.json
+//DMF_PUB__PATH/goups/{$groupName}.json
 abstract class GroupConfig
 {
     protected $desc;
     protected $groupName;
-    protected $config;
     
-    protected function __construct($groupName,GroupConfigJson $config)
+    protected function __construct($groupName, array $config)
     {
+
         $this->groupName  = $groupName;
-        $this->config = $config;
+        $this->desc = $config['desc'];
+    }
+    
+    private static function IsValidConfig($config) {
+        return
+            is_array($config)
+            && array_key_exists('desc', $config)
+            && array_key_exists('targetconfig', $config);
     }
     
     public static function FromConfigFile($fp) {
@@ -17,16 +24,20 @@ abstract class GroupConfig
             throw new Exception("Config file not found: {$fp}.");
         }
 
-        $json = new GroupConfigJson(json_decode(file_get_contents($fp), true));
-        $className = "{$json->targetconfig}Base";
-                
+        $jsonarr = json_decode(file_get_contents($fp), true);
+        if (!self::IsValidConfig($jsonarr)) {
+            throw new Exception(
+                "Bad config format!: ".var_export($jsonarr, true));
+        }
+        
+        $className = "{$jsonarr['targetconfig']}Base"; 
         $targetGroupName = basename($fp, ".json");
-        return new $className($targetGroupName, $json);
+        return new $className($targetGroupName, $jsonarr);
     }
     
     public function GetGroupName() { return $this->groupName; }
     
-    public function GetDesc() { return $this->config->desc; }
+    public function GetDesc() { return $this->desc; }
     
     public function GetCommentFormats() { return $this->cmtformats; }
     
@@ -49,7 +60,7 @@ abstract class GroupConfig
         return $arr;
     }
     
-    public abstract function CmtUploadPreprocess($str);
+    public abstract function CmtUploadPreprocess(string $str);
     
     public abstract function GenerateFlashVarArr(VideoInfo $source);
     

@@ -9,12 +9,12 @@ class BilibiliCfgV2Base extends GroupConfig
     //$config->desc;
     //$config->targetconfig;
     //$groupName;
-    public function __construct($groupName, GroupConfigJson $config)
+    public function __construct($groupName, array $config)
     {
         parent::__construct($groupName, $config);
     }
     
-    public function CmtUploadPreprocess($str) {
+    public function CmtUploadPreprocess(string $str) {
         return simplexml_load_string($str);
     }
     

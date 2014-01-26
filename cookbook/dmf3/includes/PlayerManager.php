@@ -13,11 +13,21 @@ final class PlayerManager extends Singleton {
 
     public function PlayerExists($playerid, $groupName = "")
     {
-        return
-            array_key_exists($playerid, $this->playerInstances)
-            && ( !empty($groupName) && ($this->$playerid->group = $groupName));
+        $exists = array_key_exists($playerid, $this->playerInstances);
+        
+        if (empty($groupName)) {
+            return $exists;
+        } else {
+            if ($exists) {
+                $player = $this->{$playerid};
+                $groupMatches = $player->group == $groupName;
+                return $groupMatches;
+            } else {
+                return false;
+            }
+        }
     }
-
+    
     // 返回数组$arr['playerid'] = Player
     public function GetPlayers($groupName)
     {
@@ -33,13 +43,26 @@ final class PlayerManager extends Singleton {
 
 	public function GetDefault($groupName)
 	{
-		return $this->playerInstances["abcd"];
+        $path = DMF_PUB__PATH."/players/{$groupName}/default.json";
+        if (!file_exists($path)) {
+            throw new Exception("!!!!!");
+        }
+        $cfg = json_decode(file_get_contents($path));
+        if ($cfg === NULL) {    
+            throw new Exception("Bad default.json!");
+        }
+        $id = $cfg->playerid;
+        if (!$this->PlayerExists($id, $groupName)) {
+            throw new Exception("找不到默认播放器{$id}");
+        } else {
+            return $this->playerInstances[$id];
+        }
 	}
 
     public function __get($playerid)
     {
-        if ($this->PlayerExists($playerid)) {
-            return $this->playerInstance[$playerid];
+        if (array_key_exists($playerid, $this->playerInstances)) {
+            return $this->playerInstances[$playerid];
         } else {
             throw new Exception("找不到播放器{$playerid}");
         }

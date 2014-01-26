@@ -13,8 +13,8 @@
  * @copyright Jeremy Coates 2002-2007
  * @see license.txt LGPL / BSD license
  * @since PHP 5
- * @link $HeadURL: https://xtpl.svn.sourceforge.net/svnroot/xtpl/trunk/xtemplate.class.php $
- * @version $Id: xtemplate.class.php 21 2007-05-29 18:01:15Z cocomp $
+ * @link $HeadURL$
+ * @version $Id$
  *
  *
  * XTemplate class - http://www.phpxtemplate.org/ (x)html / xml generation with templates - fast & easy
@@ -134,6 +134,14 @@ class XTemplate {
 	 */
 	public $filename = '';
 
+	/**
+	 * Delimiter character used for preg_* function calls
+	 *
+	 * @access public
+	 * @var string
+	 */
+	public $preg_delimiter = '`';
+
 	// moved to setup method so uses the tag_start & end_delims
 	/**
 	 * RegEx for file includes
@@ -148,7 +156,7 @@ class XTemplate {
 	/**
 	 * RegEx for file include variable
 	 *
-	 * "/\{FILE\s*\{([A-Za-z0-9\._]+?)\}\s*\}/m";
+	 * "/\{FILE\s*\{([A-Za-z0-9\._\x7f-\xff]+?)\}\s*\}/m";
 	 *
 	 * @access public
 	 * @var string
@@ -158,7 +166,7 @@ class XTemplate {
 	/**
 	 * RegEx for file includes with newlines
 	 *
-	 * "/^\s*\{FILE\s*\{([A-Za-z0-9\._]+?)\}\s*\}\s*\n/m";
+	 * "/^\s*\{FILE\s*\{([A-Za-z0-9\._\x7f-\xff]+?)\}\s*\}\s*\n/m";
 	 *
 	 * @access public
 	 * @var string
@@ -175,11 +183,11 @@ class XTemplate {
 
 	/**
 	 * Template block end delimiter
-	 * @fix KPX: 每个block不再输出为空行
+	 *
 	 * @access public
 	 * @var string
 	 */
-	public $block_end_delim = '-->(?:[\r\n]{0,2}[ |\t]*)';
+	public $block_end_delim = '-->';
 
 	/**
 	 * Template block start word
@@ -224,7 +232,14 @@ class XTemplate {
 	 * @var string
 	 */
 	public $tag_end_delim = '}';
-	/* this makes the delimiters look like: {tagname} if you use my syntax. */
+
+	/**
+	 * Delimeter character for comments withing tags and blocks
+	 * Should also be in XTemplate::$comment_preg
+	 *
+	 * @var string
+	 */
+	public $comment_delim = '#';
 
 	/**
 	 * Regular expression element for comments within tags and blocks
@@ -238,6 +253,63 @@ class XTemplate {
 	 * @var string
 	 */
 	public $comment_preg = '( ?#.*?)?';
+
+	/**
+	 * Delimiter character for callbacks within tags
+	 * Should also be in XTemplate::$callback_preg
+	 *
+	 * @var string
+	 */
+	public $callback_delim = '|';
+
+	/**
+	 * Regular expression elements for callback functions within tags
+	 *
+	 * @example {tagname|my_callback_func(true, %s)} - tagname contents passed at %s point
+	 * @example {tagname|my_callback_func} - tagname contents passed as single argument
+	 * @example {tagname|first_callback|second_callback('#value', true, %s)|third_callback #Comment}
+	 * @example If you want quotes within your quoted strings, you'll need to escape them with \
+	 * @example {tagname|callback('I hope this won\'t break')
+	 *
+	 * @access public
+	 * @var string
+	 */
+	public $callback_preg = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(\(.*?\))?';
+
+	/**
+	 * Whether to enable callback feature or not
+	 *
+	 * @access public
+	 * @var boolean
+	 */
+	public $allow_callbacks = true;
+
+	/**
+	 * Allowed callback functions
+	 *
+	 * Small security limiter - stops everything being available
+	 * For reference, all methods in sub-classes are available, this only applies to function calls
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $allowed_callbacks = array(
+	// Simple string modifiers
+	'strtoupper', 'strtolower', 'ucwords', 'ucfirst', 'strrev', 'str_word_count', 'strlen',
+	// String replacement modifiers
+	'str_replace', 'str_ireplace', 'preg_replace', 'strip_tags', 'stripcslashes', 'stripslashes', 'substr',
+	'str_pad', 'str_repeat', 'strtr', 'trim', 'ltrim', 'rtrim', 'nl2br', 'wordwrap', 'printf', 'sprintf',
+	'addslashes', 'addcslashes',
+	// Encoding / decoding modifiers
+	'htmlentities', 'html_entity_decode', 'htmlspecialchars', 'htmlspecialchars_decode',
+	'urlencode', 'urldecode',
+	// Date / time modifiers
+	'date', 'idate', 'strtotime', 'strftime', 'getdate', 'gettimeofday',
+	// Number modifiers
+	'number_format', 'money_format',
+	// Miscellaneous modifiers
+	'var_dump', 'print_r'
+	);
 
 	/**
 	 * Default main template block name
@@ -254,6 +326,14 @@ class XTemplate {
 	 * @var string
 	 */
 	public $output_type = 'HTML';
+
+	/**
+	 * Force all globals to be available in scan_globals
+	 * if PHP auto_globals_jit config is on (& working!)
+	 *
+	 * @var boolean
+	 */
+	public $force_globals = true;
 
 	/**
 	 * Debug mode
@@ -308,32 +388,30 @@ class XTemplate {
 	/**
      * PHP 5 Constructor - Instantiate the object
      *
-     * @param string $file Template file to work on
+     * @param array $options Options array (was $file)
      * @param string/array $tpldir Location of template files (useful for keeping files outside web server root)
      * @param array $files Filenames lookup
      * @param string $mainblock Name of main block in the template
      * @param boolean $autosetup If true, run setup() as part of constuctor
      * @return XTemplate
      */
-	public function __construct($file, $tpldir = '', $files = null, $mainblock = 'main', $autosetup = true) {
+	public function __construct($options, $tpldir = '', $files = null, $mainblock = 'main', $autosetup = true) {
 
-		$this->restart($file, $tpldir, $files, $mainblock, $autosetup, $this->tag_start_delim, $this->tag_end_delim);
-	}
+		/**
+		 * Support deprecated multi-param constructor behaviour
+		 */
+		if (!is_array($options)) {
+			$options = array('file' => $options, 'path' => $tpldir, 'files' => $files, 'mainblock' => $mainblock, 'autosetup' => $autosetup);
+		}
 
-	/**
-     * PHP 4 Constructor - Instantiate the object
-     *
-     * @deprecated Use PHP 5 constructor instead
-     * @param string $file Template file to work on
-     * @param string/array $tpldir Location of template files (useful for keeping files outside web server root)
-     * @param array $files Filenames lookup
-     * @param string $mainblock Name of main block in the template
-     * @param boolean $autosetup If true, run setup() as part of constuctor
-     * @return XTemplate
-     */
-	public function XTemplate ($file, $tpldir = '', $files = null, $mainblock = 'main', $autosetup = true) {
+		if (!isset($options['tag_start'])) {
+			$options['tag_start']	= $this->tag_start_delim;
+		}
+		if (!isset($options['tag_end'])) {
+			$options['tag_end']		= $this->tag_end_delim;
+		}
 
-		assert('Deprecated - use PHP 5 constructor');
+		$this->restart($options);
 	}
 
 
@@ -359,25 +437,71 @@ class XTemplate {
 	 * @param string $tag_start {
 	 * @param string $tag_end }
 	 */
-	public function restart ($file, $tpldir = '', $files = null, $mainblock = 'main', $autosetup = true, $tag_start = '{', $tag_end = '}') {
+	public function restart ($options, $tpldir = '', $files = null, $mainblock = 'main', $autosetup = true, $tag_start = '{', $tag_end = '}') {
 
-		$this->filename = $file;
+		/**
+		 * Encourage an options array to be passed as the first parameter
+		 *
+		 * Deprecate the massive list of parameters
+		 */
+		if (is_array($options)) {
+			foreach ($options as $option => $value) {
+				switch ($option) {
+					case 'path':
+					case 'tpldir':
+						$tpldir = $value;
+						break;
+
+					case 'callbacks':
+						$this->allow_callbacks = true;
+						$this->allowed_callbacks = array_merge($this->allowed_callbacks, (array) $value);
+						break;
+
+					case 'debug':
+						$this->debug = $value;
+						break;
+
+					case 'file':
+					case 'files':
+					case 'mainblock':
+					case 'autosetup':
+					case 'tag_start':
+					case 'tag_end':
+						$$option = $value;
+						break;
+				}
+			}
+
+			$this->filename = $file;
+
+		} else {
+			$this->filename = $options;
+		}
 
 		// From SF Feature request 1202027
 		// Kenneth Kalmer
-		$this->tpldir = $tpldir;
+		if (isset($tpldir)) {
+			$this->tpldir = $tpldir;
+		}
 		if (defined('XTPL_DIR') && empty($this->tpldir)) {
 			$this->tpldir = XTPL_DIR;
 		}
 
-		if (is_array($files)) {
+		if (isset($files) && is_array($files)) {
 			$this->files = $files;
 		}
 
-		$this->mainblock = $mainblock;
+		if (isset($mainblock)) {
+			$this->mainblock = $mainblock;
+		}
 
-		$this->tag_start_delim = $tag_start;
-		$this->tag_end_delim = $tag_end;
+		if (isset($tag_start)) {
+			$this->tag_start_delim = $tag_start;
+		}
+
+		if (isset($tag_end)) {
+			$this->tag_end_delim = $tag_end;
+		}
 
 		// Start with fresh file contents
 		$this->filecontents = '';
@@ -393,7 +517,17 @@ class XTemplate {
 		$this->filevar_parent = array();
 		$this->filecache = array();
 
-		if ($autosetup) {
+		if ($this->allow_callbacks) {
+			$delim = preg_quote($this->callback_delim);
+			if (strlen($this->callback_delim) < strlen($delim)) {
+				// Quote our quotes
+				$delim = preg_quote($delim);
+			}
+
+			$this->callback_preg = preg_replace($this->preg_delimiter . '^\(' . $delim . '(.*)\)\*$' . $this->preg_delimiter, '\\1', $this->callback_preg);
+		}
+
+		if (!isset($autosetup) || $autosetup) {
 			$this->setup();
 		}
 	}
@@ -412,13 +546,16 @@ class XTemplate {
 		// Setup the file delimiters
 
 		// regexp for file includes
-		$this->file_delim = "/" . $this->tag_start_delim . "FILE\s*\"([^\"]+)\"" . $this->comment_preg . $this->tag_end_delim . "/m";
+		$this->file_delim = $this->preg_delimiter . $this->tag_start_delim . "FILE\s*\"([^\"]+)\"" . $this->comment_preg . $this->tag_end_delim . $this->preg_delimiter . 'm';
 
 		// regexp for file includes
-		$this->filevar_delim = "/" . $this->tag_start_delim . "FILE\s*" . $this->tag_start_delim . "([A-Za-z0-9\._]+?)" . $this->comment_preg . $this->tag_end_delim . $this->comment_preg . $this->tag_end_delim . "/m";
+		$this->filevar_delim = $this->preg_delimiter . $this->tag_start_delim . "FILE\s*" . $this->tag_start_delim . "([A-Za-z0-9\._\x7f-\xff]+?)" . $this->comment_preg . $this->tag_end_delim . $this->comment_preg . $this->tag_end_delim . $this->preg_delimiter . 'm';
 
 		// regexp for file includes w/ newlines
-		$this->filevar_delim_nl = "/^\s*" . $this->tag_start_delim . "FILE\s*" . $this->tag_start_delim . "([A-Za-z0-9\._]+?)" . $this->comment_preg . $this->tag_end_delim . $this->comment_preg . $this->tag_end_delim . "\s*\n/m";
+		$this->filevar_delim_nl = $this->preg_delimiter . "^\s*" . $this->tag_start_delim . "FILE\s*" . $this->tag_start_delim . "([A-Za-z0-9\._\x7f-\xff]+?)" . $this->comment_preg . $this->tag_end_delim . $this->comment_preg . $this->tag_end_delim . "\s*\n" . $this->preg_delimiter . 'm';
+
+		// regexp for tag callback matching
+		$this->callback_preg = '(' . preg_quote($this->callback_delim) . $this->callback_preg . ')*';
 
 		if (empty($this->filecontents)) {
 			// read in template file
@@ -457,19 +594,25 @@ class XTemplate {
      * @example {name.key} {name.key2} {name.key3} in template
      *
      * @access public
-     * @param string $name Variable to assign $val to
-     * @param string / array $val Value to assign to $name
+     * @param string / array / object $name Variable to assign $val to
+     * @param string / array / object $val Value to assign to $name
 	 * @param boolean $reset_array Reset the variable array if $val is an array
      */
 	public function assign ($name, $val = '', $reset_array = true) {
 
-		if (is_array($name)) {
+		/**
+		 * Allow assigning with objects as well as arrays
+		 *
+		 * @author JRCoates
+		 * @since 04/09/2008
+		 */
+		if (is_array($name) || is_object($name)) {
 
 			foreach ($name as $k => $v) {
 
 				$this->vars[$k] = $v;
 			}
-		} elseif (is_array($val)) {
+		} elseif (is_array($val) || is_object($val)) {
 
 			// Clear the existing values
     		if ($reset_array) {
@@ -550,27 +693,33 @@ class XTemplate {
 		$var_array = array();
 
 		/* find & replace variables+blocks */
-		preg_match_all("|" . $this->tag_start_delim . "([A-Za-z0-9\._]+?" . $this->comment_preg . ")" . $this->tag_end_delim. "|", $copy, $var_array);
+		preg_match_all($this->preg_delimiter . $this->tag_start_delim . '([A-Za-z0-9\._\x7f-\xff]+?' . $this->callback_preg . $this->comment_preg . ')' . $this->tag_end_delim . $this->preg_delimiter, $copy, $var_array);
 
 		$var_array = $var_array[1];
 
 		foreach ($var_array as $k => $v) {
+			// Use in regexes later
+			$orig_v = $v;
 
 			// Are there any comments in the tags {tag#a comment for documenting the template}
-			$any_comments = explode('#', $v);
-			$v = rtrim($any_comments[0]);
+			$comment = '';
+			$any_comments = explode($this->comment_delim, $v);
+			if (count($any_comments) > 1) {
+				$comment = array_pop($any_comments);
+			}
+			$v = rtrim(implode($this->comment_delim, $any_comments));
 
-			if (sizeof($any_comments) > 1) {
-
-				$comments = $any_comments[1];
-			} else {
-
-				$comments = '';
+			if ($this->allow_callbacks) {
+				// Callback function modifiers {tag|callback}
+				$callback_funcs = explode($this->callback_delim, $v);
+				$v = rtrim($callback_funcs[0]);
+				unset($callback_funcs[0]);
 			}
 
 			$sub = explode('.', $v);
 
 			if ($sub[0] == '_BLOCK_') {
+				// BLOCKS
 
 				unset($sub[0]);
 
@@ -589,25 +738,25 @@ class XTemplate {
 						//                      $copy=preg_replace("/^\s*\{".$v."\}\s*\n*/m","",$copy);
 						// Now blocks don't need to be at the beginning of a line,
 						//$copy=preg_replace("/\s*" . $this->tag_start_delim . $v . $this->tag_end_delim . "\s*\n*/m","",$copy);
-						$copy = preg_replace("|" . $this->tag_start_delim . $v . $this->tag_end_delim . "|m", '', $copy);
+						$copy = preg_replace($this->preg_delimiter . $this->tag_start_delim . $v . $this->tag_end_delim . $this->preg_delimiter . 'm', '', $copy);
 
 					} else {
 
-						$copy = preg_replace("|" . $this->tag_start_delim . $v . $this->tag_end_delim . "|m", "$nul", $copy);
+						$copy = preg_replace($this->preg_delimiter . $this->tag_start_delim . $v . $this->tag_end_delim . $this->preg_delimiter . 'm', "$nul", $copy);
 					}
 				} else {
 
 					//$var = trim($var);
 					switch (true) {
-						case preg_match('/^\n/', $var) && preg_match('/\n$/', $var):
+						case preg_match($this->preg_delimiter . "^\n" . $this->preg_delimiter, $var) && preg_match($this->preg_delimiter . "\n$" .$this->preg_delimiter, $var):
 							$var = substr($var, 1, -1);
 							break;
 
-						case preg_match('/^\n/', $var):
+						case preg_match($this->preg_delimiter . "^\n" . $this->preg_delimiter, $var):
 							$var = substr($var, 1);
 							break;
 
-						case preg_match('/\n$/', $var):
+						case preg_match($this->preg_delimiter . "\n$" . $this->preg_delimiter, $var):
 							$var = substr($var, 0, -1);
 							break;
 					}
@@ -619,59 +768,154 @@ class XTemplate {
 					// Replaced str_replaces with preg_quote
 					//$var = preg_quote($var);
 					$var = str_replace('\\|', '|', $var);
-					$copy = preg_replace("|" . $this->tag_start_delim . $v . $this->tag_end_delim . "|m", "$var", $copy);
+					$copy = preg_replace($this->preg_delimiter . $this->tag_start_delim . $v . $this->tag_end_delim . $this->preg_delimiter . 'm', "$var", $copy);
 
-					if (preg_match('/^\n/', $copy) && preg_match('/\n$/', $copy)) {
+					if (preg_match($this->preg_delimiter . "^\n" . $this->preg_delimiter, $copy) && preg_match($this->preg_delimiter . "\n$" . $this->preg_delimiter, $copy)) {
 						$copy = substr($copy, 1, -1);
 					}
 				}
 			} else {
+				// TAGS
 
 				$var = $this->vars;
 
 				foreach ($sub as $v1) {
 
 					// NW 4 Oct 2002 - Added isset and is_array check to avoid NOTICE messages
-					// JC 17 Oct 2002 - Changed EMPTY to stlen=0
+					// JC 17 Oct 2002 - Changed EMPTY to strlen=0
 					//                if (empty($var[$v1])) { // this line would think that zeros(0) were empty - which is not true
-					if (!isset($var[$v1]) || (!is_array($var[$v1]) && strlen($var[$v1]) == 0)) {
+					/**
+					 * Allow assigning with objects as well as arrays
+					 *
+					 * @author JRCoates
+					 * @since 04/09/2008
+					 */
+					switch (true) {
+						case is_array($var):
+							if (!isset($var[$v1]) || (is_string($var[$v1]) && strlen($var[$v1]) == 0)) {
 
-						// Check for constant, when variable not assigned
-						if (defined($v1)) {
+								// Check for constant, when variable not assigned
+								if (defined($v1)) {
 
-							$var[$v1] = constant($v1);
+									$var[$v1] = constant($v1);
 
-						} else {
+								} else {
 
-							$var[$v1] = null;
+									$var[$v1] = null;
+								}
+							}
+							$var = $var[$v1];
+							break;
+
+						case is_object($var):
+							 if (!isset($var->$v1) || (is_string($var->$v1) && strlen($var->$v1) == 0)) {
+								// Check for constant, when variable not assigned
+								if (defined($v1)) {
+
+									$var->$v1 = constant($v1);
+
+								} else {
+
+									$var->$v1 = null;
+								}
+							 }
+							$var = $var->$v1;
+							break;
+					}
+				}
+
+				/**
+				 * Callback function handling
+				 * Inspired by sf feature request #1756946 christophe_lu
+				 *
+				 * @author JRCoates (cocomp)
+				 * @since 03/08/2007
+				 */
+				if ($this->allow_callbacks) {
+					if (is_array($callback_funcs) && !empty($callback_funcs)) {
+						foreach ($callback_funcs as $callback) {
+							// See if we've got parameters being used e.g. |str_replace('A', 'B', %s)
+							if (preg_match($this->preg_delimiter . '\((.*?)\)' . $this->preg_delimiter, $callback, $matches)) {
+								$parameters = array();
+								/**
+								 * Zero width assertion positive look behind (?<=a)x
+								 * Zero width assertion negative look behind (?<!a)x
+								 * Zero width assertion positive look ahead x(?=a)
+								 * Zero width assertion negative look ahead x(?!a)
+								 */
+								if (preg_match_all($this->preg_delimiter . '(?#
+									match optional comma, optional other stuff, then
+									apostrophes / quotes then stuff followed by comma or
+									closing bracket negative look behind for an apostrophe
+									or quote not preceeded by an escaping back slash
+									)[,?\s*?]?[\'|"](.*?)(?<!\\\\)(?<=[\'|"])[,|\)$](?#
+									OR match optional comma, optional other stuff, then
+									multiple word \w with look behind % for our %s followed
+									by comma or closing bracket
+									)|,?\s*?([\w(?<!\%)]+)[,|\)$]' . $this->preg_delimiter, $matches[1] . ')', $param_matches)) {
+									$parameters = $param_matches[0];
+								}
+
+								if (count($parameters)) {
+									array_walk($parameters, array($this, 'trim_callback'));
+									if (($key = array_search('%s', $parameters)) !== false) {
+										$parameters[$key] = $var;
+									} else {
+										array_unshift($parameters, $var);
+									}
+								} else {
+									unset($parameters);
+								}
+							}
+
+							// Remove the parameters
+							$callback = preg_replace($this->preg_delimiter . '\(.*?\)' . $this->preg_delimiter, '', $callback);
+
+							// Allow callback of methods in a sub-class of XTemplate
+							// e.g. you must my_class extends XTemplate {} if you want to use this feature
+							if (is_subclass_of($this, 'XTemplate') && method_exists($this, $callback) && is_callable(array($this, $callback))) {
+								if (isset($parameters)) {
+									$var = call_user_func_array(array($this, $callback), $parameters);
+									unset($parameters);
+								} else {
+									// Standard form e.g. {tag|callback}
+									$var = call_user_func(array($this, $callback), $var);
+								}
+							} elseif (in_array($callback, $this->allowed_callbacks) && function_exists($callback) && is_callable($callback)) {
+								if (isset($parameters)) {
+									$var = call_user_func_array($callback, $parameters);
+									unset($parameters);
+								} else {
+									// Standard form e.g. {tag|callback}
+									$var = call_user_func($callback, $var);
+								}
+							}
 						}
 					}
-
-					$var = $var[$v1];
 				}
 
 				$nul = (!isset($this->_null_string[$v])) ? ($this->_null_string[""]) : ($this->_null_string[$v]);
 				$var = (!isset($var)) ? $nul : $var;
 
-				if ($var === '') {
-					// -----------------------------------------------------------
-					// Removed requriement for blocks to be at the start of string
-					// -----------------------------------------------------------
-					//                    $copy=preg_replace("|^\s*\{".$v." ?#?".$comments."\}\s*\n|m","",$copy);
-					$copy = preg_replace("|" . $this->tag_start_delim . $v . "( ?#" . $comments . ")?" . $this->tag_end_delim . "|m", '', $copy);
+				// Prevent cast to strings when arrays passed in
+				if (is_string($var)) {
+					if ($var === '') {
+						$copy = preg_replace($this->preg_delimiter . $this->tag_start_delim . preg_quote($orig_v) . $this->tag_end_delim . $this->preg_delimiter . 'm', '', $copy);
+					} else {
+						//$var = trim($var);
+						// SF Bug no. 810773 - thanks anonymous
+						$var = str_replace('\\', '\\\\', $var);
+						// Ensure dollars in strings are not evaluated reported by SadGeezer 31/3/04
+						$var = str_replace('$', '\\$', $var);
+						// Replace str_replaces with preg_quote
+						//$var = preg_quote($var);
+						$var = str_replace('\\|', '|', $var);
+					}
 				}
 
-				$var = trim($var);
-				// SF Bug no. 810773 - thanks anonymous
-				$var = str_replace('\\', '\\\\', $var);
-				// Ensure dollars in strings are not evaluated reported by SadGeezer 31/3/04
-				$var = str_replace('$', '\\$', $var);
-				// Replace str_replaces with preg_quote
-				//$var = preg_quote($var);
-				$var = str_replace('\\|', '|', $var);
-				$copy = preg_replace("|" . $this->tag_start_delim . $v . "( ?#" . $comments . ")?" . $this->tag_end_delim . "|m", "$var", $copy);
+				$copy = preg_replace($this->preg_delimiter . $this->tag_start_delim . preg_quote($orig_v) . $this->tag_end_delim . $this->preg_delimiter . 'm', "$var", $copy);
 
-				if (preg_match('/^\n/', $copy) && preg_match('/\n$/', $copy)) {
+				if (preg_match($this->preg_delimiter . "^\n" . $this->preg_delimiter, $copy) && preg_match($this->preg_delimiter . "\n$" . $this->preg_delimiter, $copy)) {
 					$copy = substr($copy, 1);
 				}
 			}
@@ -764,7 +1008,28 @@ class XTemplate {
 		if ($this->debug && $this->output_type == 'HTML') {
 			// JC 20/11/02 echo the template filename if in development as
 			// html comment
-			$text .= '<!-- XTemplate: ' . realpath($this->filename) . " -->\n";
+			/**
+			 * Altered to cater for template directory array
+			 * @since 24/07/2007
+			 */
+			$text .= '<!-- XTemplate debug TEXT: ' . $bname . ' ';
+			if (is_array($this->tpldir)) {
+
+				foreach ($this->tpldir as $dir) {
+
+					if (is_readable($dir . DIRECTORY_SEPARATOR . $this->filename)) {
+						$text .= realpath($dir . DIRECTORY_SEPARATOR . $this->filename);
+						break;
+					}
+				}
+			} elseif (!empty($this->tpldir)) {
+
+				$text .= realpath($this->tpldir. DIRECTORY_SEPARATOR . $this->filename);
+			} else {
+
+				$text .= $this->filename;
+			}
+			$text .= " -->\n";
 		}
 
 		$bname = !empty($bname) ? $bname : $this->mainblock;
@@ -906,10 +1171,40 @@ class XTemplate {
      */
 	public function scan_globals () {
 
-		reset($GLOBALS);
+		$GLOB = array();
+
+		if ($this->force_globals && ini_get('auto_globals_jit') == true) {
+			$tmp = $_SERVER;
+			$tmp = $_ENV;
+			$tmp = $_REQUEST;
+			unset($tmp);
+		}
 
 		foreach ($GLOBALS as $k => $v) {
-			$GLOB[$k] = $v;
+
+			$GLOB[$k] = array();
+
+			switch ($k) {
+
+				case 'GLOBALS':
+					// Stop Recursion
+					break;
+
+				case '_COOKIE': // Cloning means changes made after calling this method won't be available
+				case '_SESSION': // Cloning means changes made after calling this method won't be available
+					$GLOB[$k] = array_merge($GLOB[$k], $v);
+					break;
+
+				case '_ENV':
+				case '_FILES':
+				case '_GET':
+				case '_POST':
+				case '_REQUEST':
+				case '_SERVER':
+				default:
+					$GLOB[$k] = $v;
+					break;
+			}
 		}
 
 		/**
@@ -986,7 +1281,7 @@ class XTemplate {
 
 			$res = array();
 
-			if (preg_match_all("/$patt/ims", $v, $res, PREG_SET_ORDER)) {
+			if (preg_match_all($this->preg_delimiter . "$patt" . $this->preg_delimiter . 'ims', $v, $res, PREG_SET_ORDER)) {
 				// $res[0][1] = BEGIN or END
 				// $res[0][2] = block name
 				// $res[0][3] = comment
@@ -1087,7 +1382,7 @@ class XTemplate {
 							if ($v[1] == $name) {
 
 								// Changed as per solution in SF bug ID #1261828
-								$copy = preg_replace("/" . preg_quote($v[0]) . "/", "$val", $copy);
+								$copy = preg_replace($this->preg_delimiter . preg_quote($v[0]) . $this->preg_delimiter, "$val", $copy);
 								$this->preparsed_blocks = array_merge($this->preparsed_blocks, $this->_maketree($copy, $parent));
 								$this->filevar_parent = array_merge($this->filevar_parent, $this->_store_filevar_parents($this->preparsed_blocks));
 							}
@@ -1196,8 +1491,8 @@ class XTemplate {
 
 			$file_text .= $this->filecache[$file];
 
-			if ($this->debug) {
-				$file_text = '<!-- XTemplate debug cached: ' . realpath($file) . ' -->' . "\n" . $file_text;
+			if ($this->debug && $this->output_type == 'HTML') {
+				$file_text = '<!-- XTemplate debug CACHED: ' . realpath($file) . ' -->' . "\n" . $file_text;
 			}
 
 		} else {
@@ -1217,7 +1512,7 @@ class XTemplate {
 
 				}
 
-				if ($this->debug) {
+				if ($this->debug && $this->output_type == 'HTML') {
 					$file_text = '<!-- XTemplate debug: ' . realpath($file) . ' -->' . "\n" . $file_text;
 				}
 
@@ -1226,20 +1521,26 @@ class XTemplate {
 				// Implemented at suggestion of SF Feature Request ID #1529478 michaelgroh
 				if ($file_text === false) {
 					$this->_set_error("[" . realpath($file) . "] ($file) does not exist");
-					$file_text = "<b>__XTemplate fatal error: file [$file] does not exist in the include path__</b>";
-				} elseif ($this->debug) {
-					$file_text = '<!-- XTemplate debug: ' . realpath($file) . ' (via include path) -->' . "\n" . $file_text;
+					if ($this->output_type == 'HTML') {
+						$file_text = "<b>__XTemplate fatal error: file [$file] does not exist in the include path__</b>";
+					}
+				} elseif ($this->debug && $this->output_type == 'HTML') {
+					$file_text = '<!-- XTemplate debug (via include path): ' . realpath($file) . ' -->' . "\n" . $file_text;
 				}
 			} elseif (!is_file($file)) {
 
 				// NW 17 Oct 2002 : Added realpath around the file name to identify where the code is searching.
 				$this->_set_error("[" . realpath($file) . "] ($file) does not exist");
-				$file_text .= "<b>__XTemplate fatal error: file [$file] does not exist__</b>";
+				if ($this->output_type == 'HTML') {
+					$file_text .= "<b>__XTemplate fatal error: file [$file] does not exist__</b>";
+				}
 
 			} elseif (!is_readable($file)) {
 
 				$this->_set_error("[" . realpath($file) . "] ($file) is not readable");
-				$file_text .= "<b>__XTemplate fatal error: file [$file] is not readable__</b>";
+				if ($this->output_type == 'HTML') {
+					$file_text .= "<b>__XTemplate fatal error: file [$file] is not readable__</b>";
+				}
 			}
 
 			$this->filecache[$file] = $file_text;
@@ -1264,12 +1565,26 @@ class XTemplate {
 		while (preg_match($this->file_delim,$text,$res)) {
 
 			$text2 = $this->_getfile($res[1]);
-			$text = preg_replace("'".preg_quote($res[0])."'",$text2,$text);
+			$text = preg_replace($this->preg_delimiter . preg_quote($res[0]) . $this->preg_delimiter, $text2, $text);
 		}
 
 		return $text;
 	}
 
+	/**
+	 * Function for preparing tag callback function parameters
+	 *
+	 * @access protected
+	 * @param string $value
+	 */
+	protected function trim_callback (&$value) {
+		$value = preg_replace($this->preg_delimiter . "^.*(%s).*$" . $this->preg_delimiter, '\\1', trim($value));
+		$value = preg_replace($this->preg_delimiter . '^,?\s*?(.*?)[,|\)]?$' . $this->preg_delimiter, '\\1', trim($value));
+		$value = preg_replace($this->preg_delimiter . '^[\'|"]?(.*?)[\'|"]?$' . $this->preg_delimiter, '\\1', trim($value));
+		$value = preg_replace($this->preg_delimiter . '\\\\(?=\'|")' . $this->preg_delimiter, '', $value);
+		// Deal with escaped commas (beta)
+		$value = preg_replace($this->preg_delimiter . '\\\,' . $this->preg_delimiter, ',', $value);
+	}
 
 	/**
      * add an outer block delimiter set useful for rtfs etc - keeps them editable in word
@@ -1287,15 +1602,30 @@ class XTemplate {
 	/**
      * Debug function - var_dump wrapped in '<pre></pre>' tags
      *
-     * @access private
+     * @access protected
      * @param multiple var_dumps all the supplied arguments
      */
-	private function _pre_var_dump ($args) {
+	protected function _pre_var_dump ($args) {
 
 		if ($this->debug) {
 			echo '<pre>';
 			var_dump(func_get_args());
 			echo '</pre>';
+		}
+	}
+
+	/**
+	 * Debug function - var_dump and return
+	 *
+	 * @access protected
+	 * @param multiple var_dumps all the supplied arguments
+	 */
+	protected function _ob_var_dump ($args) {
+
+		if ($this->debug) {
+			ob_start();
+			$this->_pre_var_dump(func_get_args());
+			return ob_get_clean();
 		}
 	}
 } /* end of XTemplate class. */

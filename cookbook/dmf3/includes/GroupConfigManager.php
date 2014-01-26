@@ -35,9 +35,8 @@ class GroupConfigManager extends Singleton {
     
     public function __get($groupName)
     {
-        $key = strtolower($groupName);
-        if (array_key_exists($key, $this->configInstance)) {
-            return $this->configInstance[$key];
+        if (array_key_exists($groupName, $this->configInstance)) {
+            return $this->configInstance[$groupName];
         } else {
             throw new Exception("找不到{$groupName}");
         }

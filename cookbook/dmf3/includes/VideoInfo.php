@@ -96,12 +96,12 @@ final class VideoInfo extends ConfigJson
         //指定的
         if (!is_null($this->userplayer)) 
                 return $manager->{$this->userplayer};
-
+        
         //播放器默认
         if ($manager->PlayerExists($this->playerid)) {
             return $manager->{$this->playerid};
         }
-
+        
         //配置默认
         return $manager->GetDefault($this->group);
     }

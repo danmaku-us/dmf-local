@@ -1,10 +1,10 @@
-<!-- BEGIN: Main -->
+<!-- BEGIN: main -->
 <!-- BEGIN: GroupConfiguration -->
 <!-- BEGIN: Show -->
 <div class='vspace'></div>
 <h2>组配置：</h2>
 <hr />
-<table border='0' id='GroupConfigurations' >
+<table border='0' cellpadding=5 id='GroupConfigurations' >
     <tr >
         <td  align='left'>组名</td>
         <td  align='left'>类名</td>
@@ -26,22 +26,27 @@
 <hr />
 <table border='0' >
     <tr >
-        <td  align='right'>组名:</td>
-        <td  align='left'>{GroupName}<input type='text' name='username' class='inputbox' /></td>
+        <td  align='left'>组名:</td>
+        <td  align='left'><input type='text' name='GroupName' class='inputbox' /></td>
     </tr>
     <tr >
-        <td  align='right'>配置id:</td>
+        <td  align='left'>配置id:</td>
         <td  align='left'>
-            <select name='name' class='inputbox'>
+            <select name='TargetGroupConfigName' class='inputbox'>
                 <!-- BEGIN: Item -->
-                <option value='value'>label</option>
-                <!-- BEGIN: Item -->
+                <option value='{Name}'>{Name}</option>
+                <!-- END: Item -->
             </select>
         </td>
     </tr>
     <tr >
+        <td  align='left'>描述:</td>
+        <td  align='left'><input type='text' name='Desc' class='inputbox' />
+        </td>
+    </tr>
+    <tr >
         <td >&nbsp;</td>
-        <td  align='left'><input type='submit' value='Log In' class='inputbutton' /></td>
+        <td  align='left'><input type='submit' value='添加' class='inputbutton' /></td>
     </tr>
 </table>
 <!-- END: Add -->
@@ -78,10 +83,10 @@
         </tr>
         <tr >
             <td >&nbsp;</td>
-            <td  align='left'><input type='submit' value='Log In' class='inputbutton' /></td>
+            <td  align='left'><input type='submit' value='添加' class='inputbutton' /></td>
         </tr>
     </table>
 </form>
-<!-- BEGIN: GroupItem -->
+<!-- END: GroupItem -->
 <!-- END: PlayerConfiguration -->
 <!-- END: Main -->

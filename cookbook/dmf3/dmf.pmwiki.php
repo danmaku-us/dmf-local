@@ -18,20 +18,8 @@ if ($LOCALVERSION) {
 	$HandleAuth['dmpost'] = 'admin`';
 }
 
-Markup("SideBarLoader", 'directives',
-    '/DMFSideBarLoader_CONFIRM_DMFSideBarLoader/',
-    DMF_SideBarLoader());
-    
-function DMF_SideBarLoader() {
-    $manager = GroupConfigManager::GetInstance();
-    $sb = "";
-    foreach ($manager->ToArray() as $Group => $Config) {
-        $sb .= "* &nbsp;[[{$Group}/HomePage|{$Group} {$Config->GetDesc()}]]\r\n";
-    }
-    return $sb;
-}
-
-include_once(DMF_ROOT_PATH."/dmf.pmwiki.pageloader.php");
+include_once(DMF_ROOT_PATH."/dmf.pmwiki.markup.sidebar.php");
+include_once(DMF_ROOT_PATH."/dmf.pmwiki.markup.playpage.php");
 
 //上传
 $EnableUpload = 1;

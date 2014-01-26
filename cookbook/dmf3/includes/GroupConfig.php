@@ -39,7 +39,7 @@ abstract class GroupConfig
     
     public function GetDesc() { return $this->desc; }
     
-    public function GetCommentFormats() { return $this->cmtformats; }
+    public function GetCommentFormats() { return $this->cmtFormats; }
     
     public function GetPrefix() { return $this->GetGroupName(); }
     

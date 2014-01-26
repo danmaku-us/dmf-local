@@ -2,7 +2,7 @@
 <!-- BEGIN: GroupConfiguration -->
 <!-- BEGIN: Show -->
 <div class='vspace'></div>
-<h2>组配置：</h2>
+<h1>已有配置</h1>
 <hr />
 <table border='0' cellpadding=5 id='GroupConfigurations' >
     <tr >
@@ -12,25 +12,24 @@
     </tr>
     <!-- BEGIN: GroupItem -->
     <tr >
-        <td  align='left'>{GroupName}</td>
+        <td  align='left'><a href='http://localhost/{GroupName}'>{GroupName}</a></td>
         <td  align='left'>{ClassName}</td>
         <td  align='left'>{JsonPath}</td>
     </tr>
     <!-- END: GroupItem -->
 </table>
-<p>tips: 更新DMF以获得新的配置文件</p>
 <!-- END: Show -->
 <!-- BEGIN: Add -->
 <div class='vspace'></div>
-<h2>添加组</h2>
+<h1>添加组</h1>
 <hr />
 <table border='0' >
     <tr >
-        <td  align='left'>组名:</td>
+        <td  align='right'>组名:</td>
         <td  align='left'><input type='text' name='GroupName' class='inputbox' /></td>
     </tr>
     <tr >
-        <td  align='left'>配置id:</td>
+        <td  align='right'>配置文件:</td>
         <td  align='left'>
             <select name='TargetGroupConfigName' class='inputbox'>
                 <!-- BEGIN: Item -->
@@ -40,7 +39,7 @@
         </td>
     </tr>
     <tr >
-        <td  align='left'>描述:</td>
+        <td  align='right'>描述:</td>
         <td  align='left'><input type='text' name='Desc' class='inputbox' />
         </td>
     </tr>
@@ -56,37 +55,66 @@
 
 <!-- BEGIN: PlayerConfiguration -->
 <div class='vspace'></div>
-<h2>播放器配置</h2>
+<!-- BEGIN: Show -->
+<h1>已有播放器</h1>
 <hr />
-<!-- BEGIN: GroupItem -->
-<form action='http://www.example.com' method='post'>
-    <table border='0' >
-        <tr >
-            <td  align='left'>组</td>
-            <td  align='left'>System <input type='hidden' name='group' value='login' /></td>
-        </tr>
-        <tr >
-            <td  align='left'>设置默认播放器</td>
-            <td  align='left'>
-                <select name='name' class='inputbox'>
-                    <option value='value'>label</option>
+<table border='0' cellpadding='6'>
+    <tr >
+        <td  align='left'>组名</td>
+        <td  align='left'>播放器id</td>
+        <td  align='left'>本地版本</td>
+        <td  align='left'>服务器版本</td>
+        <td  align='left'></td>
+    <tr/>
+    <!-- BEGIN: Player -->
+    <tr >
+        <td  align='left'>{Group}</td>
+        <td  align='left'>{PlayerId}</td>
+        <td  align='left'>{LocalVer}</td>
+        <td  align='left'>{ServerVer}</td>
+        <!-- BEXGIN: Update -->
+        <!--<td  align='left'>{Server}</td>-->
+        <!-- EXnd: Update -->
+    <tr/>
+    <!-- END: Player -->
+</table>
+<!-- END: Show -->
+<!-- BEGIN: Set -->
+<h1>播放器设置</h1>
+<hr />
+<table border='0' >
+    <!-- BEGIN: Group -->
+    <tr >
+        <td  align='right'>{Group}</td>
+        <td  align='left'>
+            设置默认播放器为：<form action='/System/Config' method='post'>
+                <input type="hidden" name="action" value="SetDefaultPlayer" />
+                <input type="hidden" name="group"  value="{Group}" />
+                <select name='DefaultPlayerId' class='inputbox'>
+                    <!-- BEGIN: Player -->
+                    <option value='{PlayerId}' {Selected}>{PlayerId}</option>
+                    <!-- END: Player -->
                 </select>
-            </td>
-        </tr>
-        <tr >
-            <td  align='left'>下载播放器</td>
-            <td  align='left'>
-                <select name='name' class='inputbox'>
-                    <option value='value'>label</option>
+                <input type='submit' value='确认' class='inputbutton' />
+            </form>
+        </td>
+        <td  align='left'>
+            下载新播放器：
+            <form action='/System/Config' method='post'>
+                <input type="hidden" name="action" value="DownloadNewPlayer" />
+                <input type="hidden" name="group"  value="{Group}" />
+                <select name='playerId' class='inputbox'>
+                    <!-- BEGIN: NewPlayer -->
+                    <option value='{PlayerId}' {Selected}>{PlayerId}</option>
+                    <!-- END: NewPlayer -->
                 </select>
-            </td>
-        </tr>
-        <tr >
-            <td >&nbsp;</td>
-            <td  align='left'><input type='submit' value='添加' class='inputbutton' /></td>
-        </tr>
-    </table>
-</form>
-<!-- END: GroupItem -->
+                <input type='submit' value='确认' class='inputbutton' />
+            </form>
+        </td>
+    </tr>
+    <!-- END: Group -->
+</table>
+<!-- END: Set -->
+
 <!-- END: PlayerConfiguration -->
 <!-- END: Main -->

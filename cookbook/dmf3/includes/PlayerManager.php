@@ -29,9 +29,9 @@ final class PlayerManager extends Singleton {
     }
     
     // 返回数组$arr['playerid'] = Player
-    public function GetPlayers($groupName)
+    public function GetPlayers($groupName = "")
     {
-
+        if (empty($groupName)) return $this->playerInstances;
         $arr = array();
         foreach ($this->playerInstances as $name => $player) {
             if ($player->group == $groupName) {

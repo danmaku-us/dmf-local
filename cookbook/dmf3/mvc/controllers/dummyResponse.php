@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-class DummyController extends K_Controller {
+class DummyResponse extends K_Controller {
     public function __construct() {
         parent::__construct();
     }

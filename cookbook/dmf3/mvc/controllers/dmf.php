@@ -2,7 +2,9 @@
 class Dmf extends K_Controller {
 
     public function getLocalUploads() {
-        if (!$GLOBALS['LOCALVERSION']) {
+        global $FarmD;
+        
+        if (!$GLOBALS['isLocalVersion']) {
             exit;
         }
         
@@ -17,6 +19,7 @@ class Dmf extends K_Controller {
                 $files[basename($file)] = $BaseUrl.$file;
             }
         }
-        echo "var files=".json_encode($files).";";
+        header('Content-type: application/javascript');
+        die("var files=".json_encode($files).";");
     }
 }

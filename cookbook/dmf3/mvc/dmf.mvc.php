@@ -4,9 +4,13 @@ define("DMF_MVC__PATH", dirname(__FILE__));
 
 spl_autoload_register(function ($class) {
     $p = DMF_MVC__PATH."/controllers/{$class}.php";
-    if (file_exists($p)) 
+    if (file_exists($p)) {
         include($p);
+    } else {
+        FB::info("MVC::Autoloader failed to load {$p}");
+    }
 });
+
 include(DMF_MVC__PATH."/core/class.Controller.php");
 include(DMF_MVC__PATH."/core/class.Router.php");
 include(DMF_MVC__PATH."/core/class.Input.php");

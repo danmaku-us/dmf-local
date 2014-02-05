@@ -7,9 +7,9 @@ messages => $MessageFmt
 IsMuti
 -->
 <!-- BEGIN: main -->
-<table border='0' width='100%' cellpadding='3' cellspacing='0' >
+<table border='0' cellpadding='3' cellspacing='0' >
     <tr>
-        <td  valign='top'>
+        <td style="white-space: nowrap;" valign='top'>
             <div  style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px;' >
                 <!-- BEGIN: source -->
                 <p>来源：{SOURCE}</p>
@@ -28,7 +28,7 @@ IsMuti
                 <!-- END: messages -->
             </div>
         </td>
-        <td rowspan='3' bgcolor='#f7f7f7' width='950'  valign='top'>
+        <td rowspan='3' bgcolor='#f7f7f7' width="99%" valign='top'>
             <!-- BEGIN: PartContainer -->
             <div  style='font-size: small;' > 
                 <p><strong>分P:</strong><br />
@@ -43,16 +43,85 @@ IsMuti
             <!-- END: DESC -->
         </td>
     </tr>
-    <tr>
-        <td width='950'  valign='top'>
-            <hr />
+    <tr >
+        <td   valign='top' style="border-top: 3px solid #cccccc;white-space: nowrap;">
             <!-- BEGIN: DanmakuBar -->
+            <!-- BEGIN: Script -->
+            <script type="text/javascript">
+                DMF = {
+                    "Group"     : "{GROUP}",
+                    "CommentId" : "{DANMAKUID}",
+                    "Prefix"    : "{SUID}"
+                }
+
+                function showError(str) {
+                    swfobject.removeSWF("flashcontent");
+                    var errorstr = Date() + "<br />" + str + "<br />" + "请修正错误后刷新播放<br />-----------<br />";
+                    $("#flashcontainer").append(errorstr);
+                }
+                //response format:
+                // {
+                //      "code"  : int,
+                //      "errmsg": string,
+                //      "msg"   : string
+                // }
+                function Validate() {
+                    $.getJSON("/poolop/validate/" + DMF.Group + "/" +  DMF.CommentId +"/dynamic", function(result){
+                        if (result.code < 0 ) {
+                            showError("验证失败" + result.code + "<br />" + result.errormsg + "<br />" + result.msg);
+                        } else {
+                            refreshPlayer();
+                        }
+                    });
+                }
+                
+                function _upload(result) {
+                    alert(result.code);
+                }
+
+                function Upload() {
+                }
+
+                function Clear(pool) {
+                    $.getJSON("/poolop/clear/" + DMF.Group + "/" +  DMF.CommentId + "/" + pool, function(result){
+                        if (result.code < 0 ) {
+                            showError("弹幕池清空失败" + result.code + "<br />" + result.errormsg + "<br />" + result.msg);
+                        } else {
+                            refreshPlayer();
+                        }
+                    });
+                }
+
+                function Merge(poolfrom, poolto) {
+                    $.getJSON("/poolop/merge/" + DMF.Group + "/" +  DMF.CommentId + "/" + poolfrom + "/" + poolto, function(result){
+                        if (result.code < 0 ) {
+                            showError("弹幕池合并失败" + result.code + "<br />" + result.errormsg + "<br />" + result.msg);
+                        } else {
+                            refreshPlayer();
+                        }
+                    });
+                }
+
+                function Randomize(pool) {
+                    $.getJSON("/poolop/randomize/" + DMF.Group + "/" +  DMF.CommentId + "/" + pool, function(result){
+                        if (result.code < 0 ) {
+                            showError("弹幕池id随机化失败" + result.code + "<br />" + result.errormsg + "<br />" + result.msg);
+                        } else {
+                            refreshPlayer();
+                        }
+                    });
+                }
+            </script>
+            <!-- END: Script -->
             <!-- BEGIN: Upload -->
-            <form action='/poolop/post/{GROUP}/{DANMAKUID}' class='DanmakuBar' enctype='multipart/form-data' method='post'>
-                <input name='uploadfile' type='file' />弹幕池:<select class='inputbox' name='Pool'>
+            <form action='/poolop/post/{GROUP}/{DANMAKUID}' class='DanmakuBar' name="CmtFileUpload" enctype='multipart/form-data' method='post'>
+                <input name='CmtFile' type='file' />
+                弹幕池:<select class='inputbox' name='Pool'>
                     <option value='Static'>静态</option>
                     <option value='Dynamic' selected="selected">动态</option>
-                </select>追加:<input name='Append' type='checkbox' value='true' checked="checked"/><input class='inputbutton' name='post' type='submit' value='上传' />
+                </select>
+                追加:<input name='Append' type='checkbox' value='true' checked="checked"/>
+                <input class='inputbutton' type='submit' value='提交' onclick="javascript:Upload()" />
             </form>&nbsp;&nbsp;
             <!-- END: Upload -->
             <!-- BEGIN: Download -->
@@ -74,11 +143,11 @@ IsMuti
                 <input class='inputbutton' type='submit' value='下载' />
             </form>&nbsp;&nbsp;
             <!-- END: Download -->
-            <!-- BEGIN: Refresh--> <span class='DanmakuBar'> <a style='color: black' href="javascript:refreshPlayer();">刷新</a> </span><!-- END: Refresh-->
+            <!-- BEGIN: Refresh--> <span class='DanmakuBar'> <a style='color: black' href="javascript:refreshPlayer();">刷新播放器</a> </span><!-- END: Refresh-->
             <!-- BEGIN: NewLine--> <br /> <!-- END: NewLine-->
             <!-- BEGIN: DynamicPool -->
             <span style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px; line-height: 2em;'>
-                <a class='urllink' href='/poolop/validate/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>验证动态池</a>&nbsp;&nbsp;
+                <a class='urllink' href='javascript:Validate();' style='color: black'>验证动态池</a>&nbsp;&nbsp;
                 <a class='wikilink' href='/DMR/{SUID}{DANMAKUID}?action=edit' style='color: black'>动态池编辑</a>&nbsp;&nbsp;
             </span>
             <!-- END: DynamicPool -->
@@ -90,21 +159,21 @@ IsMuti
             <!-- BEGIN: PoolOperation -->
             <span style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px; line-height: 2em;'>
                 清空弹幕池： 
-                    <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/static' style='color: black'>静态</a>&nbsp;
-                    <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
-                    <a class='urllink' href='/poolop/clear/{GROUP}/{DANMAKUID}/all' style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
+                    <a class='urllink' href='javascript:Clear(&quot;static&quot;);'  style='color: black'>静态</a>&nbsp;
+                    <a class='urllink' href='javascript:Clear(&quot;dynamic&quot;);' style='color: black'>动态</a>&nbsp;
+                    <a class='urllink' href='javascript:Clear(&quot;all&quot;);'     style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
                 合并弹幕池： 
-                    <a class='urllink' href='/poolop/merge/{GROUP}/{DANMAKUID}/static/dynamic' style='color: black'>S-&gt;D</a>&nbsp;
-                    <a class='urllink' href='/poolop/merge/{GROUP}/{DANMAKUID}/dynamic/static' style='color: black'>D-&gt;S</a>&nbsp;
+                    <a class='urllink' href='javascript:Merge(&quot;static&quot;, &quot;dynamic&quot;);' style='color: black'>S-&gt;D</a>&nbsp;
+                    <a class='urllink' href='javascript:Merge(&quot;dynamic&quot;, &quot;static&quot;);' style='color: black'>D-&gt;S</a>&nbsp;
                 弹幕id随机化：
-                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/static' style='color: black'>静态</a>&nbsp;
-                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/dynamic' style='color: black'>动态</a>&nbsp;
-                    <a class='urllink' href='/poolop/randomize/{GROUP}/{DANMAKUID}/all' style='color: black'>双开</a>&nbsp;&nbsp;&nbsp;
+                    <a class='urllink' href='javascript:Randomize(&quot;static&quot;);' style='color: black'>静态</a>&nbsp;
+                    <a class='urllink' href='javascript:Randomize(&quot;dynamic&quot;);' style='color: black'>动态</a>&nbsp;
+                    <a class='urllink' href='javascript:Randomize(&quot;all&quot;);' style='color: black'>双开</a>&nbsp;&nbsp;&nbsp;
             </span>
             <!-- END: PoolOperation -->
             <!-- END: DanmakuBar -->
             
-            <div id="flashcontainer">
+            <div id="flashcontainer" style="border-top: 3px solid #cccccc;">
                 <div id='flashcontent'> </div>
             </div>
             <script type="text/javascript">
@@ -120,6 +189,7 @@ IsMuti
                 }
                 
                 function refreshPlayer() {
+                    $('#flashcontainer').html('');
                     swfobject.removeSWF("flashcontent");
                     var d = document.createElement("div");
                     d.setAttribute("id", "flashcontent");
@@ -133,8 +203,7 @@ IsMuti
         </td>
     </tr>
     <tr>
-        <td width='950'  valign='top'>
-            <hr />
+        <td valign='top' style="border-top: 3px solid #cccccc;white-space: nowrap;">
             <p>切换播放器：&nbsp;&nbsp;
                 <!-- BEGIN: PlayerLoaderCurrent -->
                 <strong>{NAME}</strong>&nbsp;&nbsp;

@@ -36,7 +36,7 @@ $GroupHeaderFmt =
   
 $HTMLHeaderFmt['javascripts'] = 
     "\n<script type=\"text/javascript\" src=\"/pub/min/?b=pub/dmf&amp;f="
-    ."jquery-1.6.1.min.js,swfobject.js,jquery-ui-1.8.14.custom.min.js"
+    ."jquery-1.10.1.min.js,swfobject.js"
     ."\"></script>\n";
 
 if ($action == "browse") {

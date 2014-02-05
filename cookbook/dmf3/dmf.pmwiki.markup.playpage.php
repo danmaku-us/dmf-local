@@ -110,7 +110,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     $xtpl->Assign('GROUP'      , $gcfg->GetGroupName());
     $xtpl->Assign('DANMAKUID'  , $videocfg->GetCmtId());
     $xtpl->Assign('SUID'       , $gcfg->GetPrefix()   );
-
+    $xtpl->Parse("main.DanmakuBar.Script");
     //下载
     foreach ($gcfg->GetCommentFormats() as $format) {
         $xtpl->Parse("main.DanmakuBar.Download.Format", array('FORMAT' => $format));

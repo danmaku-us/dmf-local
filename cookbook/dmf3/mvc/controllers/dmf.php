@@ -4,7 +4,7 @@ class Dmf extends K_Controller {
     public function getLocalUploads() {
         global $FarmD;
         
-        if (!$GLOBALS['isLocalVersion']) {
+        if (!DMFConfig::LocalVersion) {
             exit;
         }
         

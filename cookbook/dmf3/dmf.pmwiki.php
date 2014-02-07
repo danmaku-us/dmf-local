@@ -9,6 +9,9 @@ $XESTagAuth = 'edit';
 include_once(DMF_DWP_PATH."/tagpages.php");
 include_once(DMF_DWP_PATH."/QueryExpr.php");
 
+SDV($WikiTitle, "弹幕塚");
+SDV($PageLogoUrl, "$ScriptUrl/pub/dmf/logo.jpg");
+
 $HandleAuth['xmlread'] = 'read';
 $HandleAuth['xmledit'] = 'edit';
 $HandleAuth['xmladmin'] = 'admin';
@@ -20,6 +23,7 @@ if ($LOCALVERSION) {
 
 include_once(DMF_ROOT_PATH."/dmf.pmwiki.markup.sidebar.php");
 include_once(DMF_ROOT_PATH."/dmf.pmwiki.markup.playpage.php");
+include_once(DMF_ROOT_PATH."/dmf.pmwiki.cmtpoolgroup.php");
 
 //上传
 $EnableUpload = 1;

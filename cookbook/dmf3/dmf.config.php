@@ -1,5 +1,12 @@
 <?php if (!defined('PmWiki')) exit();
 /* 设置 */
 $isLocalVersion = true;
-$WikiTitle = "弹幕塚";
-$PageLogoUrl = "$ScriptUrl/pub/dmf/logo.jpg";
+
+final class DMFConfig
+{
+    const LocalVersion = true;
+    const Cmt_CacheDir = '/uploads';
+    const Cmt_PageGroup= 'DMR';
+    const Cmt_PageEditForm = 'DMR.EditForm';
+    
+}

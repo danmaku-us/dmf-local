@@ -29,8 +29,6 @@ function DMF_PlayerPageLoader($jsonText) {
 //格式(action, name, data = array())
 function LoaderGenerateConfig(VideoInfo $videocfg)
 {
-    global $isLocalVersion;
-
     $pagename = $videocfg->pagename;
     $group    = $videocfg->group;
     $gcfg     = GroupConfigManager::Get($group);
@@ -38,7 +36,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/playpage.tmpl');
     
     //来源
-    if ($isLocalVersion) {
+    if (DMFConfig::LocalVersion) {
         $xtpl->SetNull('main.source');
     } else {
         $xtpl->Parse('main.source', array('SOURCE' => $videocfg->srclink));

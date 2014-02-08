@@ -1,7 +1,4 @@
 <?php if (!defined('PmWiki')) exit();
-/* 设置 */
-$isLocalVersion = true;
-
 final class DMFConfig
 {
     const LocalVersion = true;

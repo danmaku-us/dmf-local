@@ -1,16 +1,19 @@
 <?php if (!defined('PmWiki')) exit();
 final class CommentPool
 {
+    private $pagename;
+    private $cacheFile;
 	private $xmlobj;
-	private $isStatic;
-
-	public function __construct($cmtPoolId, $gConfig, $forceDynamic = false)
+	private $isCached;
+	private $gCfg;
+    
+    // 总是读取缓存
+    // 如果没有缓存不存在就读取文件
+    // 如果文件不存在就扔异常
+	public function __construct($cmtPoolId, $gConfig)
 	{
-		if ($forceDynamic) {
-			$this->loadDynamic();
-		} else {
-			$this->loadStatic();
-		}
+        $this->cacheFile = "";
+        $this->pagename  = "";
 	}
 
 	public function Append()
@@ -23,7 +26,7 @@ final class CommentPool
 
 	}
 
-	public function Search()
+	public function Search(CommentQuery $q)
 	{
 
 	}
@@ -32,41 +35,41 @@ final class CommentPool
 	{
 
 	}
+	
+	public function NextId()
+	{
+        /*
+        $xml = simplexml_load_string($x); // assume XML in $x
+        $ids = $xml->xpath("//element/@id");
+        $newid = max(array_map(
+            function($a) {
+                list(, $id) = explode("_", $a);
+                return intval($id); }
+            , $ids)) + 1;
+        $newid = "example_$newid";
+        echo $newid;
+        */
+	}
 
 	public function Save()
 	{
-
+        //write to Page
+        
+        //write to xmlfile
 	}
 
-	public function SaveStatic()
+	private function Validate()
 	{
-
-	}
-
-	private function isValid()
-	{
-
+        //format check
+        //simple syntax check
+        //groupconfig check
 	}
 
 	private function hasCmtId($id)
 	{
 
 	}
-
-	private function loadDynamic()
-	{
-		unset($this->xmlobj);
-		
-		$this->isStatic = false;
-	}
-
-	private function loadStatic()
-	{
-		if ($this->isStatic === false) {
-			throw new Exception("动态模式下不允许覆盖", 1);
-		}
-		$this->isStatic = true;
-	}
-
-
+    
+    private function loadCached(){}
+    private function loadPaged(){}
 }

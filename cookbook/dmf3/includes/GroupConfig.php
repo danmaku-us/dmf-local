@@ -41,7 +41,7 @@ abstract class GroupConfig
     
     public function GetCommentFormats() { return $this->cmtFormats; }
     
-    public function GetPrefix() { return $this->GetGroupName(); }
+    public function GetPoolPageNamePrefix() { return $this->GetGroupName(); }
     
     public function GetConfigPath() {
         return DMF_PUB__PATH . "/groups/" . $this->groupName . ".json";

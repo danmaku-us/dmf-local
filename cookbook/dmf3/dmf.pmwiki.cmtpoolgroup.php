@@ -5,11 +5,11 @@
  *          这个方案会影响到其他页面编辑
  *          应该使用其他的action避免干扰
  */
-if (PageVar($pagename, '$Group') == DMFConfig::Cmt_PageGroup) {
+if (PageVar($pagename, '$Group') == DMFConfig::CMT_PageGroup) {
     $EnableNotify = 0;
     $EnablePostAuthorRequired = 0;
     array_unshift($EditFunctions,'ValidateXML');
-    $PageEditForm = DMFConfig::Cmt_PageEditForm;
+    $PageEditForm = DMFConfig::CMT_PageEditForm;
 }
 
 function ValidateXML($pagename,&$page,&$new)

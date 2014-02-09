@@ -118,10 +118,6 @@ IsMuti
             <!-- BEGIN: Upload -->
             <form action='/poolop/post/{GROUP}/{DANMAKUID}' class='DanmakuBar' name="CmtFileUpload" enctype='multipart/form-data' method='post'>
                 <input name='CmtFile' type='file' />
-                弹幕池:<select class='inputbox' name='Pool'>
-                    <option value='Static'>静态</option>
-                    <option value='Dynamic' selected="selected">动态</option>
-                </select>
                 追加:<input name='Append' type='checkbox' value='true' checked="checked"/>
                 <input class='inputbutton' type='submit' value='提交' onclick="javascript:Upload()" />
             </form>&nbsp;&nbsp;
@@ -149,8 +145,8 @@ IsMuti
             <!-- BEGIN: NewLine--> <br /> <!-- END: NewLine-->
             <!-- BEGIN: DynamicPool -->
             <span style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px; line-height: 2em;'>
-                <a class='urllink' href='javascript:Validate();' style='color: black'>验证动态池</a>&nbsp;&nbsp;
-                <a class='wikilink' href='/DMR/{SUID}{DANMAKUID}?action=edit' style='color: black'>动态池编辑</a>&nbsp;&nbsp;
+                <a class='urllink' href='javascript:Validate();' style='color: black'>验证弹幕池</a>&nbsp;&nbsp;
+                <a class='wikilink' href='/DMR/{SUID}{DANMAKUID}?action=edit' style='color: black'>弹幕池编辑</a>&nbsp;&nbsp;
             </span>
             <!-- END: DynamicPool -->
             <!-- BEGIN: PageOperation -->

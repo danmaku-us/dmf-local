@@ -2,8 +2,8 @@
 final class DMFConfig
 {
     const LocalVersion = true;
-    const Cmt_CacheDir = '/uploads';
-    const Cmt_PageGroup= 'DMR';
-    const Cmt_PageEditForm = 'DMR.EditForm';
-    
+    const CMT_CacheDir      = '/pub/dmf/commentcache';
+    const CMT_PageGroup     = 'DMR';
+    const CMT_PageEditForm  = 'DMR.EditForm';
+    const CMT_UseCachePool  = true;
 }

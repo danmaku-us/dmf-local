@@ -29,7 +29,7 @@ function HandleMVCURL($pn, $auth = 'read') {
         $controller = "defaultController";
         $action     = "try_getFile";
     } else {
-        $controller = $router->controller;
+        $controllerName = $router->controller;
         $action     = $router->action;
     }
 
@@ -37,12 +37,12 @@ function HandleMVCURL($pn, $auth = 'read') {
     $MVC_Input = $input;
     $MVC_Router = $router;
     
-    $controller = create_object($controller);
+    $controller = create_object($controllerName);
     $arr = array($controller, $action);
-    if (is_callable($arr, TRUE)) {
+    if (method_exists($controller, $action) && is_callable($arr, TRUE)) {
         die(call_user_func_array($arr, $router->params));
     } else {
-        Abort("Unknown Method");
+        FB::Error("Unknown controller {$controllerName}::{$action}");
     }
 }
 

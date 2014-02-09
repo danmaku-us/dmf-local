@@ -50,6 +50,12 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     } else {
         $xtpl->Parse("main.tagListNormal");
     }
+    //弹幕池权限提醒
+     if (!CommentPool::CanWrite($group, $poolId)) {
+        $GLOBALS['MessagesFmt'][] =
+            '<div style="color:#ff0000;font-size:x-small;font-weight:bold;">没有弹幕池写入权限，相关功能已禁用<br />'.
+            '请登录或输入弹幕池密码</div>';
+     }
 
     //调试信息
     $GLOBALS['MessagesFmt'][] = 
@@ -107,7 +113,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     //弹幕控制
     $xtpl->Assign('GROUP'      , $gcfg->GetGroupName());
     $xtpl->Assign('DANMAKUID'  , $videocfg->GetCmtId());
-    $xtpl->Assign('SUID'       , $gcfg->GetPrefix()   );
+    $xtpl->Assign('SUID'       , $gcfg->GetPoolPageNamePrefix()   );
     $xtpl->Parse("main.DanmakuBar.Script");
     //下载
     foreach ($gcfg->GetCommentFormats() as $format) {

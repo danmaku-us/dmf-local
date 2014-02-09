@@ -15,7 +15,6 @@ final class VideoInfo extends ConfigJson
     protected $group;
     protected $userplayer = null;
 
-
     public function __construct($arr, $pagename, $player = null, $partid = null)
     {
         $this->pagename = $pagename;
@@ -105,7 +104,17 @@ final class VideoInfo extends ConfigJson
         //配置默认
         return $manager->GetDefault($this->group);
     }
-
+    
+    public function GetPageName()
+    {
+        return $this->pagename;
+    }
+    
+    public function GetGroup()
+    {
+        return PageVar($this->pagename, '$Group');
+    }
+    
     public function Validate($arr)
     {
         //var_dump($this);exit;

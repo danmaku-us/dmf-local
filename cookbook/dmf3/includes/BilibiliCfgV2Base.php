@@ -34,6 +34,7 @@ class BilibiliCfgV2Base extends GroupConfig
                 $t = VideoSources::LOCAL;
                 throw new Exception("未知视频类型{$videocfg->videotype} :: {$t}");
         }
+        $params->addVar('group', $videocfg->GetGroup());
         return $params;
 	}
         

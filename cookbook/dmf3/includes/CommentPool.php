@@ -15,6 +15,21 @@ final class CommentPool
         $this->cacheFile = "";
         $this->pagename  = "";
 	}
+	
+	public static function GetPageName($group, $poolId) {
+        $gcfg = GroupConfigManager::Get($group);
+        
+        $prefix = $gcfg->GetPoolPageNamePrefix();
+        return DMFConfig::CMT_PageGroup.".{$prefix}{$poolId}";
+	}
+	
+    public static function CanRead($group, $poolId) {
+        return CondAuth(self::GetPageName($group, $poolId), 'xmlread');
+    }
+    
+    public static function CanWrite($group, $poolId) {
+        return CondAuth(self::GetPageName($group, $poolId), 'xmledit');
+    }
 
 	public function Append()
 	{

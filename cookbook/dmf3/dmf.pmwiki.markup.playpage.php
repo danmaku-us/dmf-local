@@ -33,7 +33,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     $group    = $videocfg->group;
     $gcfg     = GroupConfigManager::Get($group);
         
-    $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/playpage.tmpl');
+    $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/res/playpage.tmpl');
     
     //来源
     if (DMFConfig::LocalVersion) {

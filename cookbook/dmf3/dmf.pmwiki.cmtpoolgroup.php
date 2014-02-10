@@ -16,7 +16,7 @@ function ValidateXML($pagename,&$page,&$new)
 {
 	global $Now, $EnablePost, $MessagesFmt, $WorkDir;
 
-	$SimXMLHeader = '<?xml version="1.0" encoding="UTF-8"?><comments>';
+	$SimXMLHeader = '<?xml version="1.0" encoding="utf-8"?><comments>';
 	$SimXMLFooter = '</comments>';
 	
 	if ($new['text'] == '') return;

@@ -4,7 +4,7 @@ class DummyResponse extends K_Controller {
         parent::__construct();
     }
     
-    public function emptytext() {
+    public function emptyText() {
         die("");
     }
     

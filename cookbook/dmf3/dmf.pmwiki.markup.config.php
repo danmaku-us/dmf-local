@@ -31,7 +31,7 @@ function GetAllGroupConfigs() {
 //格式(action, name, data = array())
 function ConfigHTML()
 {
-    $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/configpage.tmpl');
+    $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/res/configpage.tmpl');
     $groups = GetAllDMFGroups();
     $manager= GroupConfigManager::GetInstance();
     

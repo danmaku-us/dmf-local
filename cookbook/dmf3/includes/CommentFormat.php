@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-abstract class CommentFormats extends BasicEnum {
+abstract class CommentFormat extends BasicEnum {
     const D      = "dmf_cmtformat_d";
     const DATA   = "dmf_cmtformat_data";
     const RAW    = "dmf_cmtformat_dmf";

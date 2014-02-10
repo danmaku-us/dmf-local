@@ -1,10 +1,14 @@
 <?php if (!defined('PmWiki')) exit();
 class BilibiliCommonInterface extends PlayerInterface{
-    protected function cmtload($group, $cmtid, $format) {
-    
+
+    public function cmtload($extId) {
+        list($group, $poolId) = explode('-', $extId, 2);
+        parent::_cmtload($group, $poolId, CommentFormat::D);
     }
-    protected function cmtpost($group, $cmtid) {
     
+    public function cmtpost($extId) {
+        list($group, $poolId) = explode('-', $extId, 2);
+        $pn = CommentPool::GetPageName($group, $poolId);
     }
     
     //static response
@@ -44,7 +48,7 @@ class BilibiliCommonInterface extends PlayerInterface{
             CommentPool::CanWrite($group, $poolId) ?
             BilibiliAuthLevel::Danmaku_VIP :
             BilibiliAuthLevel::GUEST       ;
-
+        header("Content-Type:text/plain; charset=utf-8");
         $this->DisplayView('bilibili_dad_xml', $data);
     }
     
@@ -55,16 +59,19 @@ class BilibiliCommonInterface extends PlayerInterface{
     
     public function dmerror()
     {
-    
+        
     }
+    
     public function del()
     {
     
     }
+    
     public function updcmttime()
     {
     
     }
+    
     public function dmm()
     {
     

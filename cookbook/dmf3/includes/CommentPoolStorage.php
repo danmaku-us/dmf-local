@@ -31,7 +31,12 @@ abstract class CommentPoolStorage
         return CondAuth($pn, 'edit');
     }
     
-    protected static function GetErrorXML($errmsg)
+    public static function GetEmptyObj()
+    {
+        return simplexml_load_string(self::XMLHeader . self::XMLFooter);
+    }
+    
+    protected static function GetErrorObj($errmsg)
     {
         $errorXML = 
             self::XMLHeader.
@@ -115,10 +120,11 @@ final class PagedPoolStorage extends CommentPoolStorage
         $static= $page['staticpool'];
         $xmlobj = simplexml_load_string(self::XMLHeader.$static.$dyn.self::XMLFooter);
         if ($xmlobj !== FALSE) {
-            return $xmlobj;
+            return array(true, $xmlobj);
         } else {
             FB::Error("{$this->pagename}XML格式非法");
-            return CommentPoolStorage::GetErrorXML("{$this->pagename}XML格式非法");
+            return array(false,
+                    CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法"));
         }
     }
 

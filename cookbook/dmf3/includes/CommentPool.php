@@ -2,7 +2,7 @@
 final class CommentPool
 {
     const Pool_Cached = 'Pool_Cached';
-    const Pool_Paged  = 'Pool_Paged';
+    const Pool_Live   = 'Pool_Live';
     const Pool_Error  = 'Pool_Error';
 
     private $storage;
@@ -10,29 +10,34 @@ final class CommentPool
 	private $poolState = self::Pool_Cached;
 	private $gCfg;
 	
+    private $group;
+    private $poolId;
+
     // 总是读取缓存
     // 如果没有缓存不存在就读取文件
     // 如果文件不存在就扔异常
 	public function __construct($group, $poolId)
 	{
-
+        $this->group     = $group;
+        $this->poolId    = $poolId;
         $this->gCfg      = GroupConfigManager::Get($group);
         
         if (DMFConfig::CMT_UsePoolCache) {
-            $this->loadCached($group, $poolId);
+            $this->loadCached();
         } else {
-            $this->loadLive($group, $poolId);
+            $this->loadLive();
         }
 	}
 	
 	public function Append()
 	{
-
+        $this->requireLive();
 	}
 
 	public function Clear()
 	{
-
+        $this->requireLive();
+        
 	}
 
 	public function Search(CommentQuery $q)
@@ -42,22 +47,17 @@ final class CommentPool
 
 	public function Replace()
 	{
+        $this->requireLive();
 
 	}
 	
 	public function NextId()
 	{
-        /*
-        $xml = simplexml_load_string($x); // assume xml in $x
-        $ids = $xml->xpath("//element/@id");
-        $newid = max(array_map(
-            function($a) {
-                list(, $id) = explode("_", $a);
-                return intval($id); }
-            , $ids)) + 1;
-        $newid = "example_$newid";
-        echo $newid;
-        */
+        $ids = $this->xmlobj->xpath("//comment/@cmtid");
+        return max(array_map(
+            function ($id) {
+                return intval($id);
+            })) + 1;
 	}
 
     public function GetXMLObj() {
@@ -80,28 +80,59 @@ final class CommentPool
 
 	private function hasCmtId($id)
 	{
-
+        $id = intval($id);
+        $matches = $this->xmlobj->xpath("//comment[@cmtid='{$id}']");
+        return count($matches) != 0;
 	}
     
-    private function loadCached($group, $poolId)
+    private function requireLive()
     {
+        if ($this->poolState == self::Pool_Cached) {
+            $this->loadLive();
+            return $this->requireLive();
+        }
+
+        if ($this->poolState == self::Pool_Error) {
+            $err = "弹幕池错误，不能完成请求";
+            FB::Error($err);
+            throw new Exception($err);
+        }
+    }
+    
+    private function loadCached()
+    {
+        if ($this->poolState != self::Pool_Cached) {
+            $err = "不能从{$this->poolState}变更为Cached";
+            FB:Error($err);
+            throw new Exception($err);
+        }
+
+        if (!DMFConfig::CMT_UsePoolCache) {
+            $this->loadLive();
+        }
+
         $this->storage = 
-            CommentPoolStorage::GetStorage($group, $poolId,
+            CommentPoolStorage::GetStorage($this->group, $this->poolId,
                 CommentPoolStorageType::Cached);
         
         $this->xmlobj = $this->storage->Get();
         
         if ($this->xmlobj === FALSE) {
-            $this->loadLive($group, $poolId);
+            $this->loadLive();
         }
     }
     
-    private function loadLive($group, $poolId)
+    private function loadLive()
     {
         $this->storage = 
-            CommentPoolStorage::GetStorage($group, $poolId,
+            CommentPoolStorage::GetStorage($this->group, $this->poolId,
                 DMFConfig::CMT_PoolStorage);
-        $this->xmlobj = $this->storage->Get();
+        list($state, $this->xmlobj) = $this->storage->Get();
+        if ($state == FALSE) {
+            $this->poolState = self::Pool_Live;
+        } else {
+            $this->poolState = self::Pool_Error;
+        }
     }
     
 }

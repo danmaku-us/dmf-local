@@ -45,7 +45,7 @@ class BilibiliCommonInterface extends PlayerInterface{
             $poolId : 0 ;
             
         $data['AuthLevelString'] = 
-            CommentPool::CanWrite($group, $poolId) ?
+            CommentPoolStorage::CanWrite($group, $poolId) ?
             BilibiliAuthLevel::Danmaku_VIP :
             BilibiliAuthLevel::GUEST       ;
         header("Content-Type:text/plain; charset=utf-8");

@@ -51,7 +51,7 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
         $xtpl->Parse("main.tagListNormal");
     }
     //弹幕池权限提醒
-     if (!CommentPoolStorage::CanWrite($group, $poolId)) {
+     if (DMFConfig::LocalVersion && !CommentPoolStorage::CanWrite($group, $poolId)) {
         $GLOBALS['MessagesFmt'][] =
             '<div style="color:#ff0000;font-size:x-small;font-weight:bold;">没有弹幕池写入权限，相关功能已禁用<br />'.
             '请登录或输入弹幕池密码</div>';

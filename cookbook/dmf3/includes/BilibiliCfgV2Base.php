@@ -1,8 +1,16 @@
 <?php if (!defined('PmWiki')) exit();
 class BilibiliCfgV2Base extends GroupConfig
 {
-    protected $cmtFormats   = array("d", "data", "raw");
-    protected $videoFormats = array("sina", "local", "url");
+    protected $cmtFormats   = array(
+                                    CommentFormat::D,
+                                    CommentFormat::DATA,
+                                    CommentFormat::DMF
+                                                        );
+    protected $videoFormats = array(
+                                    VideoSources::SINA,
+                                    VideoSources::LOCAL,
+                                    VideoSources::URL
+                                                        );
     protected $javascripts  = array("jq.bilibili.js", "page.arc.js");
     //继承
     //$config;

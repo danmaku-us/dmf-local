@@ -23,6 +23,7 @@
         <!-- 从1开始                                                                      -->
         <!-- example : 200.75700378418,1,25,10027212,1375173703,0,a78782cd,271189381     -->
         <comment>
+            <!-- 与弹幕本身无关的属性 -->
             <xsl:attribute name="cmtid">
                 <xsl:value-of select="$params[8]" />
             </xsl:attribute>
@@ -36,20 +37,25 @@
                 <xsl:value-of select="$params[7]" />
             </xsl:attribute>
             
+            <!-- 必须的属性 -->
+            <attr>
+                <xsl:attribute name="playtime">
+                    <xsl:value-of select="$params[1]" />
+                </xsl:attribute>
+                <xsl:attribute name="mode">
+                    <xsl:value-of select="$params[2]" />
+                </xsl:attribute>
+                <xsl:attribute name="fontsize">
+                    <xsl:value-of select="$params[3]" />
+                </xsl:attribute>
+                <xsl:attribute name="color">
+                    <xsl:value-of select="$params[4]" />
+                </xsl:attribute>
+            </attr>
             
-            <playtime>
-                <xsl:value-of select="$params[1]" />
-            </playtime>
-            <mode>
-                <xsl:value-of select="$params[2]" />
-            </mode>
-            <fontsize>
-                <xsl:value-of select="$params[3]" />
-            </fontsize>
-            <color>
-                <xsl:value-of select="$params[4]" />
-            </color>
-            <attr/>
+            <!-- 部分网站需要的其他属性 -->
+            <attrext />
+            
             <text>
                 <xsl:value-of select="text()" />
             </text>

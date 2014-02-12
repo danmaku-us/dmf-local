@@ -14,18 +14,24 @@
     <!-- 弹幕内容 -->
     <xsl:template match="comment">
         <d>
-            <!-- 不知道怎么回事合并到一起查的话会有顺序错误 -->
             <!-- p段格式：播放时间,模式,字体大小，颜色，日期，弹幕池，userid，弹幕id -->
             <xsl:attribute name="p">
-                <xsl:for-each select="playtime | mode | fontsize | color">
-                    <xsl:value-of select="." />
-                    <xsl:if test="position() != last()">,</xsl:if>
-                </xsl:for-each>
+                <!-- XSLT 1.0 没有seq类型，没找到更简单的方式就无脑流了-->
+                <xsl:value-of select="attr/@playtime" />
                 <xsl:text>,</xsl:text>
-                <xsl:for-each select="@sendtime | @poolid | @userhash | @cmtid">
-                    <xsl:value-of select="." />
-                    <xsl:if test="position() != last()">,</xsl:if>
-                </xsl:for-each>
+                <xsl:value-of select="attr/@mode" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="attr/@fontsize" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="attr/@color" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="@sendtime" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="@poolid" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="@user" />
+                <xsl:text>,</xsl:text>
+                <xsl:value-of select="@cmtid" />
             </xsl:attribute>
             <xsl:value-of select="text" />
         </d>

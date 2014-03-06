@@ -16,6 +16,7 @@ abstract class PlayerInterface extends K_Controller {
         die($xmlstr);
     }
     
+    //TODO:
     //通用的弹幕写入方式
     protected function _cmtpost($pagename, $cmt)
     {

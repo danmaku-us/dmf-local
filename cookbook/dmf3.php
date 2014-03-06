@@ -2,6 +2,7 @@
 define("DMF_ROOT_PATH", __DIR__."/dmf3");
 define("DMF_PUB__PATH", "pub/dmf");
 
+//TODO:只在admin权限下加载
 include_once(DMF_ROOT_PATH."/includes/FirePHP/FirePHP.class.php");
 include_once(DMF_ROOT_PATH."/includes/FirePHP/fb.php");
 include_once(DMF_ROOT_PATH."/dmf.config.php");

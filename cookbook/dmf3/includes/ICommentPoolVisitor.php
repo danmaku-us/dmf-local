@@ -1,4 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
+//TODO:
 interface ICommentPoolVisitor
 {
     //public function VisitCommentItem(SimpleXMLElement $elem);

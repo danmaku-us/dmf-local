@@ -127,14 +127,15 @@ final class PagedPoolStorage extends CommentPoolStorage
                     CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法"));
         }
     }
-
+    
+    //TODO:
     public function Put(SimpleXMLElement $xmlObj, $genHistory = true)
     {
 
     }
 }
 
-
+//TODO:
 //TEXT直接储存
 // pool        : int id, text group, text poolId, enum poolType, text mtime
 // poolHistory : int id, text group, text poolId, enum poolType, text mtime

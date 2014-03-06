@@ -1,4 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
+//TODO:感觉还是xpath好。。。
 final class CommentQuery implements ICommentPoolVisitor
 {
     const EQU = 'CommentQueryOperator_EQU';

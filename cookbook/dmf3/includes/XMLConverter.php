@@ -1,5 +1,6 @@
 <?php if (!defined('PmWiki')) exit();
 abstract class XMLConverter {
+    //TODO:
     public static function ToInternalFormat($XML) {
 
     }

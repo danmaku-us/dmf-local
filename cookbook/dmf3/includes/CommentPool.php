@@ -1,4 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
+//TODO:
 final class CommentPool
 {
     const Pool_Cached = 'Pool_Cached';
@@ -29,11 +30,13 @@ final class CommentPool
         }
 	}
 	
+	//附加弹幕
 	public function Append()
 	{
         $this->requireLive();
 	}
-
+    
+    //清空弹幕池
 	public function Clear()
 	{
         $this->requireLive();
@@ -51,19 +54,11 @@ final class CommentPool
 
 	}
 	
-	public function NextId()
+	//从静态<-->动态
+	public function Move($cmtids, $from, $to)
 	{
-        $ids = $this->xmlobj->xpath("//comment/@cmtid");
-        return max(array_map(
-            function ($id) {
-                return intval($id);
-            })) + 1;
 	}
-
-    public function GetXMLObj() {
-        return $this->xmlobj;
-    }
-
+	
 	public function Save($dropHistory = false)
 	{
         //write to Page
@@ -77,6 +72,19 @@ final class CommentPool
         //simple syntax check
         //groupconfig check
 	}
+
+	public function NextId()
+	{
+        $ids = $this->xmlobj->xpath("//comment/@cmtid");
+        return max(array_map(
+            function ($id) {
+                return intval($id);
+            })) + 1;
+	}
+
+    public function GetXMLObj() {
+        return $this->xmlobj;
+    }
 
 	private function hasCmtId($id)
 	{

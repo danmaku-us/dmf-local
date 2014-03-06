@@ -57,13 +57,31 @@ final class CommentPool
 	//从静态<-->动态
 	public function Move($cmtids, $from, $to)
 	{
+        
 	}
 	
-	public function Save($dropHistory = false)
+	public function Save($genHistory = false)
 	{
-        //write to Page
-        
-        //write to xmlfile
+        $this->requireLive();
+        switch ($this->poolState) {
+            case self::Pool_Cached:
+                assert(false);
+                break;
+            case self::Pool_Live:
+                $this->storage->Save($this->xmlobj, $genHistory);
+                $cached = 
+                    CommentPoolStorage::GetStorage(
+                        $this->group,
+                        $this->poolId,
+                        CommentPoolStorageType::Cached);
+                $cached->Save($this->xmlobj);
+                break;
+            case self::Pool_Error:
+                FB::error("弹幕池{$this->group}::{$this->poolId}存在错误，拒绝写入");
+                throw new Exception(
+                    "弹幕池{$this->group}::{$this->poolId}存在错误，拒绝写入");
+                break;
+        }
 	}
 
 	private function Validate()

@@ -128,10 +128,35 @@ final class PagedPoolStorage extends CommentPoolStorage
         }
     }
     
-    //TODO:
     public function Put(SimpleXMLElement $xmlObj, $genHistory = true)
     {
-
+        $old = $new = RetrieveAuthPage($this->pagename, 
+                    DMFConfig::CMT_PoolReadAuth, FALSE, READPAGE_CURRENT);
+        $new['text'] = "";
+        $new['staticpool'] = "";
+        
+        foreach ($xmlObj->comment as $node) {
+            if ( (string) $node["poolid"] == "0" ) {
+                $new['text'] .= $node->asXML();
+            } else {
+                $new['staticpool'] .= $node->asXML();
+            }
+        }
+        
+        if ($genHistory) {
+            $ret = UpdatePage($this->pagename, $old, $new);
+        } else {
+            WritePage($this->pagename, $new);
+            $ret = true; // WritePage没有返回码
+        }
+        
+        if ($ret) {
+            FB::info("{$this->pagename} 写入成功");
+        } else {
+            FB::error("{$this->pagename} 写入失败");
+        }
+        
+        return $ret;
     }
 }
 

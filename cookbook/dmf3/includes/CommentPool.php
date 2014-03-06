@@ -86,9 +86,17 @@ final class CommentPool
 
 	private function Validate()
 	{
-        //format check
-        //simple syntax check
-        //groupconfig check
+        //直接进行xsd检查，如果文件不合法那么没法被加载的
+        
+        $dom = dom_import_simplexml($this->xmlobj);
+        $res = $dom->schemaValidate(DMF_ROOT_PATH."/res/xml_dmf.xsd");
+        if (!$res) {
+            return XMLHelper::GetErrors();
+        }
+        
+        //TODO:groupconfig check
+        
+        return true;
 	}
 
 	public function NextId()

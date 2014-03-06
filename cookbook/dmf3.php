@@ -1,4 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
+libxml_use_internal_errors(true);
 define("DMF_ROOT_PATH", __DIR__."/dmf3");
 define("DMF_PUB__PATH", "pub/dmf");
 

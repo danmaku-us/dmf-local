@@ -122,9 +122,10 @@ final class PagedPoolStorage extends CommentPoolStorage
         if ($xmlobj !== FALSE) {
             return array(true, $xmlobj);
         } else {
+            $errors = XMLHelper::GetErrors();
             FB::Error("{$this->pagename}XML格式非法");
             return array(false,
-                    CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法"));
+                    CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法.{$errors}"));
         }
     }
     

@@ -81,4 +81,4 @@ $RecentChangesFmt = array(
 //include_once("$FarmD/scripts/urlapprove.php");
 $UrlLinkFmt = "<a class='urllink' href='\$LinkUrl' >\$LinkText</a>";
 
-include($FarmD."/cookbook/dmf3/dmf.php");
+include($FarmD."/cookbook/dmf3.php");

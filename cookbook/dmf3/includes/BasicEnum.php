@@ -10,6 +10,17 @@ abstract class BasicEnum {
 
         return self::$constCache;
     }
+    
+    public static function fromString($name) {
+        $constants = self::getConstants();
+        $keys = array_map('strtolower', array_keys($constants));
+        
+        if (array_key_exists(strtolower($name), $keys)) {
+            return $keys[strtolower($name)];
+        } else {
+            return FALSE;
+        }
+    }
 
     public static function isValidName($name, $strict = false) {
         $constants = self::getConstants();

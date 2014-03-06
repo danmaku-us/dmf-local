@@ -1,5 +1,5 @@
 <?php if (!defined('PmWiki')) exit();
-define("DMF_ROOT_PATH", __DIR__);
+define("DMF_ROOT_PATH", __DIR__."/dmf3");
 define("DMF_PUB__PATH", "pub/dmf");
 
 include_once(DMF_ROOT_PATH."/includes/FirePHP/FirePHP.class.php");

@@ -54,6 +54,12 @@ IsMuti
                     "CommentId" : "{DANMAKUID}",
                     "Prefix"    : "{SUID}"
                 }
+                
+                CommentPoolType = {
+                    "All" : "InternalPool_All",
+                    "Sta" : "InternalPool_Sta",
+                    "Dyn" : "InternalPool_Dyn"
+                }
 
                 function showError(str) {
                     swfobject.removeSWF("flashcontent");
@@ -157,16 +163,16 @@ IsMuti
             <!-- BEGIN: PoolOperation -->
             <span style='color: black; background-color: #f7f7f7; border: 1px solid #cccccc; padding: 4px; line-height: 2em;'>
                 清空弹幕池： 
-                    <a class='urllink' href='javascript:Clear(&quot;static&quot;);'  style='color: black'>静态</a>&nbsp;
-                    <a class='urllink' href='javascript:Clear(&quot;dynamic&quot;);' style='color: black'>动态</a>&nbsp;
-                    <a class='urllink' href='javascript:Clear(&quot;all&quot;);'     style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
+                    <a class='urllink' href='javascript:Clear(CommentPoolType.Sta);'  style='color: black'>静态</a>&nbsp;
+                    <a class='urllink' href='javascript:Clear(CommentPoolType.Dyn);' style='color: black'>动态</a>&nbsp;
+                    <a class='urllink' href='javascript:Clear(CommentPoolType.All);'     style='color: black'>双杀</a>&nbsp;&nbsp;&nbsp;
                 合并弹幕池： 
-                    <a class='urllink' href='javascript:Merge(&quot;static&quot;, &quot;dynamic&quot;);' style='color: black'>S-&gt;D</a>&nbsp;
-                    <a class='urllink' href='javascript:Merge(&quot;dynamic&quot;, &quot;static&quot;);' style='color: black'>D-&gt;S</a>&nbsp;
+                    <a class='urllink' href='javascript:Merge(CommentPoolType.Sta, CommentPoolType.Dyn);' style='color: black'>S-&gt;D</a>&nbsp;
+                    <a class='urllink' href='javascript:Merge(CommentPoolType.Dyn, CommentPoolType.Sta);' style='color: black'>D-&gt;S</a>&nbsp;
                 弹幕id随机化：
-                    <a class='urllink' href='javascript:Randomize(&quot;static&quot;);' style='color: black'>静态</a>&nbsp;
-                    <a class='urllink' href='javascript:Randomize(&quot;dynamic&quot;);' style='color: black'>动态</a>&nbsp;
-                    <a class='urllink' href='javascript:Randomize(&quot;all&quot;);' style='color: black'>双开</a>&nbsp;&nbsp;&nbsp;
+                    <a class='urllink' href='javascript:Randomize(CommentPoolType.Sta);' style='color: black'>静态</a>&nbsp;
+                    <a class='urllink' href='javascript:Randomize(CommentPoolType.Dyn);' style='color: black'>动态</a>&nbsp;
+                    <a class='urllink' href='javascript:Randomize(CommentPoolType.All);' style='color: black'>双开</a>&nbsp;&nbsp;&nbsp;
             </span>
             <!-- END: PoolOperation -->
             <!-- END: DanmakuBar -->

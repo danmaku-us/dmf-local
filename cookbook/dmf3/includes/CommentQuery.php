@@ -17,11 +17,27 @@ final class CommentQuery
     
     public function PoolType($typeId) {
         $this->funcs[] = function ($node) use($typeId) {
-            return (string)$node['pooltype'] == $typeId;
+            $type = (string)$node['pooltype'];
+            if (!empty($type)) {
+                return $type == $typeId;
+            } else {
+                return InternalPoolType::DynId == $typeId;
+            }
         };
     }
     
-    public function Match(SimpleXMLElement $node)
+    public function Match(SimpleXMLElement $xmlobj)
+    {
+        $result = array();
+        foreach ($xmlobj->comment as $commentNode) {
+            if ($this->MatchNode($commentNode)) {
+                $result[] = $commentNode;
+            }
+        }
+        return $result;
+    }
+    
+    public function MatchNode(SimpleXMLElement $node)
     {
         foreach ($this->funcs as $func) {
             if (!$func($node)) {

@@ -31,40 +31,41 @@ final class CommentPool
 	}
 	
 	//附加弹幕
+	//TODO:
 	public function Append()
 	{
         $this->requireLive();
 	}
     
     //清空弹幕池
-	public function Clear($pool = InternalPoolType::All)
+	public function Clear($pooltype = InternalPoolType::All)
 	{
         $this->requireLive();
-        switch ($pool) {
+        switch ($pooltype) {
             case InternalPoolType::All:
                 $this->xmlobj = CommentPoolStorage::GetEmptyObj();
                 return true;
             case InternalPoolType::Sta:
-                $xpath = "//comment[@pooltype='".InternalPoolType::StaId."']";
-                break;
             case InternalPoolType::Dyn:
-                $xpath = "//comment[@pooltype='".InternalPoolType::DynId."']";
-                break;
+                $id = InternalPoolType::ToId($pooltype);
+                $query = new CommentQuery();
+                $query->PoolType($id);
+                foreach ($query->Match($this->xmlobj) as $commentNode) {
+                    unset($commentNode[0][0]);
+                }
+                return true;
             default:
-                FB::Error("Unknown pool {$pool} at CommentPool::Clear()");
+                FB::Error("Unknown pool {$pooltype} at CommentPool::Clear()");
                 return false;
         }
-        foreach ($xmlobj->xpath($xpath) as $node) {
-            unset($node[0][0]);
-        }
-        return true;
 	}
 
 	public function Search(CommentQuery $q)
 	{
-
+        return $q->Match($this->xmlobj);
 	}
-
+    
+    //TODO:
 	public function Replace()
 	{
         $this->requireLive();
@@ -74,9 +75,14 @@ final class CommentPool
 	//从静态<-->动态
 	public function Move($fromtype, $totype)
 	{
+        $from = InternalPoolType::ToId($fromtype);
+        $to   = InternalPoolType::ToId($totype);
         $query = new CommentQuery();
-        $query->PoolType($fromtype);
+        $query->PoolType($from);
         
+        foreach ($query-Match($this->xmlobj) as $commentNode) {
+            $commentNode['pooltype'] = $to;
+        }
         
 	}
 	
@@ -181,7 +187,7 @@ final class CommentPool
             CommentPoolStorage::GetStorage($this->group, $this->poolId,
                 DMFConfig::CMT_PoolStorage);
         list($state, $this->xmlobj) = $this->storage->Get();
-        if ($state == FALSE) {
+        if ($state == TRUE) {
             $this->poolState = self::Pool_Live;
         } else {
             $this->poolState = self::Pool_Error;

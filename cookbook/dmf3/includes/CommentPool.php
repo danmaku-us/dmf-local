@@ -80,7 +80,7 @@ final class CommentPool
         $query = new CommentQuery();
         $query->PoolType($from);
         
-        foreach ($query-Match($this->xmlobj) as $commentNode) {
+        foreach ($query->Match($this->xmlobj) as $commentNode) {
             $commentNode['pooltype'] = $to;
         }
         
@@ -94,13 +94,13 @@ final class CommentPool
                 assert(false);
                 break;
             case self::Pool_Live:
-                $this->storage->Save($this->xmlobj, $genHistory);
+                $this->storage->Put($this->xmlobj, $genHistory);
                 $cached = 
                     CommentPoolStorage::GetStorage(
                         $this->group,
                         $this->poolId,
                         CommentPoolStorageType::Cached);
-                $cached->Save($this->xmlobj);
+                $cached->Put($this->xmlobj);
                 break;
             case self::Pool_Error:
                 FB::error("弹幕池{$this->group}::{$this->poolId}存在错误，拒绝写入");
@@ -120,7 +120,6 @@ final class CommentPool
         }
         
         //TODO:groupconfig check
-        
         return true;
 	}
 

@@ -75,6 +75,13 @@ final class CachedPoolStorage extends CommentPoolStorage
     }
     
 	private function GetCahceFilePath() {
+        $folder = DMFConfig::CMT_CacheDir."/{$this->group}";
+        if (!file_exists($folder)) {
+            var_dump($folder);
+            mkdir($folder);
+            exit;
+        }
+        
         return DMFConfig::CMT_CacheDir."/{$this->group}/{$this->poolId}";
 	}
 	
@@ -89,6 +96,7 @@ final class CachedPoolStorage extends CommentPoolStorage
     
     public function Put(SimpleXMLElement $xmlObj, $genHistory = true)
     {
+        //TODO:如果文件夹不存在还要创建
         file_put_contents($this->filePath, $xmlObj->asXML());
     }
 

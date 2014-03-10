@@ -15,7 +15,7 @@ class PoolOp extends K_Controller {
 	{
         $pool = new CommentPool($group, $poolId);
         $pool->Clear($pooltype);
-        echo "清空以后<br />";
+        $pool->Save(true);
         die('{"code":0, "errormsg":"操作成功完成", "msg":""}');
 	}
 	
@@ -25,21 +25,28 @@ class PoolOp extends K_Controller {
         return '<i/>';
 	}
 	
+	//TODO:
 	public function post($group, $poolId) // GET : pool append
 	{
         die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
 	}
 	
+    //TODO:
 	public function merge($group, $poolId, $from, $to)
 	{
-        die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
+        $pool = new CommentPool($group, $poolId);
+        $pool->Move($from, $to);
+        $pool->Save(true);
+        die('{"code":0, "errormsg":"操作成功完成", "msg":""}');
 	}
-	
+
+    //TODO:
 	public function validate($group, $poolId, $pool = 'dynamic')
 	{
         die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
 	}
-	
+
+    //TODO:
 	public function randomize($group, $poolId, $pool = 'dynamic')
 	{
         die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');

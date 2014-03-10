@@ -137,10 +137,10 @@ final class PagedPoolStorage extends CommentPoolStorage
         $new['staticpool'] = "";
         
         foreach ($xmlObj->comment as $node) {
-            if ( (string) $node["poolid"] == "0" ) {
-                $new['text'] .= $node->asXML();
-            } else {
+            if ( (string) $node["pooltype"] == InternalPoolType::StaId ) {
                 $new['staticpool'] .= $node->asXML();
+            } else {
+                $new['text'] .= $node->asXML();
             }
         }
         

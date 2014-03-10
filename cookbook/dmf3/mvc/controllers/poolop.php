@@ -1,7 +1,7 @@
 <?php if (!defined('PmWiki')) exit();
 //PoolOp / command / group / dmid / params
 //post move clear valid download
-
+//TODO:
 //弹幕操作接口
 //返回HTML
 class PoolOp extends K_Controller {
@@ -13,6 +13,7 @@ class PoolOp extends K_Controller {
     
 	public function clear($group, $dmid, $pool)
 	{
+        
         die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
 	}
 	

@@ -26,6 +26,8 @@
                             </xs:sequence>
                             <xs:element type="xs:string" name="text" />
                         </xs:sequence>
+                        <!--可选属性，表示弹幕所在内部池 -->
+                        <xs:attribute type="xs:int"    name="pooltype" />
                         <xs:attribute type="xs:int"     name="cmtid"       use="required" />
                         <xs:attribute type="xs:byte"    name="poolid"      use="required" />
                         <xs:attribute type="xs:int"     name="sendtime"    use="required" />

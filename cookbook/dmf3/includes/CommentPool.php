@@ -37,10 +37,27 @@ final class CommentPool
 	}
     
     //清空弹幕池
-	public function Clear()
+	public function Clear($pool = InternalPoolType::All)
 	{
         $this->requireLive();
-        
+        switch ($pool) {
+            case InternalPoolType::All:
+                $this->xmlobj = CommentPoolStorage::GetEmptyObj();
+                return true;
+            case InternalPoolType::Sta:
+                $xpath = "//comment[@pooltype='".InternalPoolType::StaId."']";
+                break;
+            case InternalPoolType::Dyn:
+                $xpath = "//comment[@pooltype='".InternalPoolType::DynId."']";
+                break;
+            default:
+                FB::Error("Unknown pool {$pool} at CommentPool::Clear()");
+                return false;
+        }
+        foreach ($xmlobj->xpath($xpath) as $node) {
+            unset($node[0][0]);
+        }
+        return true;
 	}
 
 	public function Search(CommentQuery $q)
@@ -55,8 +72,11 @@ final class CommentPool
 	}
 	
 	//从静态<-->动态
-	public function Move($cmtids, $from, $to)
+	public function Move($fromtype, $totype)
 	{
+        $query = new CommentQuery();
+        $query->PoolType($fromtype);
+        
         
 	}
 	
@@ -87,7 +107,6 @@ final class CommentPool
 	private function Validate()
 	{
         //直接进行xsd检查，如果文件不合法那么没法被加载的
-        
         $dom = dom_import_simplexml($this->xmlobj);
         $res = $dom->schemaValidate(DMF_ROOT_PATH."/res/xml_dmf.xsd");
         if (!$res) {

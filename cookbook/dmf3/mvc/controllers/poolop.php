@@ -3,7 +3,7 @@
 //post move clear valid download
 //TODO:
 //弹幕操作接口
-//返回HTML
+//返回JSON
 class PoolOp extends K_Controller {
     const GoBack = "<script language='javascript'> setTimeout('history.go(-1)', 2000);</script>两秒后传送回家";
         
@@ -16,7 +16,7 @@ class PoolOp extends K_Controller {
         $pool = new CommentPool($group, $poolId);
         $pool->Clear($pooltype);
         $pool->Save(true);
-        die('{"code":0, "errormsg":"操作成功完成", "msg":""}');
+        $this->returnJson(0, "操作成功完成", "");
 	}
 	
 	
@@ -28,7 +28,7 @@ class PoolOp extends K_Controller {
 	//TODO:
 	public function post($group, $poolId) // GET : pool append
 	{
-        die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
+        $this->returnJson(-1, "未实现", "");
 	}
 	
     //TODO:
@@ -37,26 +37,49 @@ class PoolOp extends K_Controller {
         $pool = new CommentPool($group, $poolId);
         $pool->Move($from, $to);
         $pool->Save(true);
-        die('{"code":0, "errormsg":"操作成功完成", "msg":""}');
+        $this->returnJson(0, "操作成功完成", "");
 	}
 
     //TODO:
 	public function validate($group, $poolId, $pool = 'dynamic')
 	{
-        die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
+        $this->returnJson(-1, "未实现", "");
 	}
 
     //TODO:
 	public function randomize($group, $poolId, $pool = 'dynamic')
 	{
-        die('{"code":-1, "errormsg":"errormsg", "msg":"反正不科学"}');
+        $this->returnJson(-1, "未实现", "");
 	}
-
+    
+    private function errorHandler($errno, $errstr, $errfile, $errline)
+    {
+        if (0 == error_reporting()) {
+            return;
+        }
+        throw new ErrorException($message, 0, $code, $file, $line);
+    }
+    
+    private function exceptionHandler($e)
+    {
+        $code = $e->getCode();
+        $errormsg = $e->getMessage();
+        $msg  = $msg . PHP_EOL.
+                $e->getFile(). " : "    .
+                $e->getLine(). PHP_EOL  .
+                $e->getTraceAsString();
+        $msg = nl2br($msg, true);
+        
+        $this->returnJson($code, $errormsg, $msg);
+    }
 	
-	private function display($msg)
+	private function returnJson($code, $errormsg, $msg)
 	{
-        $GLOBALS['MessagesFmt'] = $msg;
-        $this->DisplayView('pmwiki_view', array('name' => 'API.XMLTool'));
+        $arr = array(
+            'code'      => $code,
+            'errormsg'  => $errormsg,
+            'msg'       => $msg);
+        die(json_encode($arr, JSON_FORCE_OBJECT);
 	}
 	
 }

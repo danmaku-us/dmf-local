@@ -45,6 +45,19 @@ class PoolOp extends K_Controller {
 	//TODO:
 	public function post($group, $poolId) //GET : pool append
 	{
+        if (!CommentPoolStorage::CanWrite($group, $poolId)) {
+            throw new Exception("无权写入", -1);
+        }
+        
+        if ($this->Input->File->uploadfile['error'] != UPLOAD_ERR_OK) {
+            throw new Exception("文件上传失败", -1);
+        }
+        
+        $obj = simplexml_load_file(
+                    $this->Input->File->uploadfile['tmp_name']);
+        if ($obj === FALSE) {
+            throw new Exception("XML文件非法", -1);
+        }
         $pool = InternalPoolType::fromString(
                     basename($this->Input->Get->pool));
         $append  = intval($this->Input->Get->append);
@@ -65,6 +78,7 @@ class PoolOp extends K_Controller {
 	}
 	
     //TODO:
+    //FIX!
 	public function merge($group, $poolId, $from, $to)
 	{
         $pool = new CommentPool($group, $poolId);

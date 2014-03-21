@@ -88,6 +88,12 @@ final class CommentPool
 	
 	public function Import(SimpleXMLElement $obj)
 	{
+        $domA = dom_import_simplexml($this->xmlobj);
+        $domB = dom_import_simplexml($obj);
+        
+        $domA->importNode($domB);
+        $this->xmlobj = simplexml_import_dom($domA):
+        
 	}
 	
 	public function Save($genHistory = false)

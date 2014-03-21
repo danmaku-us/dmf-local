@@ -77,13 +77,17 @@ final class CommentPool
 	{
         $from = InternalPoolType::ToId($fromtype);
         $to   = InternalPoolType::ToId($totype);
-        $query = new CommentQuery();
+        $query= new CommentQuery();
         $query->PoolType($from);
         
         foreach ($query->Match($this->xmlobj) as $commentNode) {
             $commentNode['pooltype'] = $to;
         }
         
+	}
+	
+	public function Import(SimpleXMLElement $obj)
+	{
 	}
 	
 	public function Save($genHistory = false)

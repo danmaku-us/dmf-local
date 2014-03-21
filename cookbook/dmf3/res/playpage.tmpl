@@ -124,6 +124,11 @@ IsMuti
             <!-- BEGIN: Upload -->
             <form action='/poolop/post/{GROUP}/{DANMAKUID}' class='DanmakuBar' name="CmtFileUpload" enctype='multipart/form-data' method='post'>
                 <input name='CmtFile' type='file' />
+                提交到：
+                <select class='inputbox' name='pooltype'>
+                    <option value='InternalPool_Sta'>静态池</option>
+                    <option value='InternalPool_Dyn'>动态池</option>
+                </select>
                 追加:<input name='Append' type='checkbox' value='true' checked="checked"/>
                 <input class='inputbutton' type='submit' value='提交' onclick="javascript:Upload()" />
             </form>&nbsp;&nbsp;

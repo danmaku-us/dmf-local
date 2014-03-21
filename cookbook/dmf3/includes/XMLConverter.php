@@ -1,8 +1,13 @@
 <?php if (!defined('PmWiki')) exit();
 abstract class XMLConverter {
-    //TODO:
-    public static function ToInternalFormat($XML) {
-
+    
+    public static function ToInternalFormat(SimpleXMLElement $xmlobj) {
+        $format = CommentFormat::GuessFormat($xmlobj);
+        $xsl = self::GetXSLObj($format, CommentFormat::DMF);
+        
+        $proc = new XSLTProcessor();
+        $proc->importStyleSheet($xsl);
+        return $proc->transformToXML($XML);
     }
     
     public static function FromInternalFormat(SimpleXMLElement $XML, $format)
@@ -12,23 +17,6 @@ abstract class XMLConverter {
         $proc = new XSLTProcessor();
         $proc->importStyleSheet($xsl);
         return $proc->transformToXML($XML);
-    }
-
-    private static function getName($format)
-    {
-        switch($format) {
-            case CommentFormat::D:
-                return 'd';
-            case CommentFormat::DATA:
-                return 'data';
-            case CommentFormat::RAW:
-            case CommentFormat::DMF:
-                return 'dmf';
-            case CommentFormat::COMMENT:
-                return 'comment';
-            case CommentFormat::ACFJSON:
-                return 'acfunjson';
-        }
     }
 
     private static function GetXSLObj($fromFormat, $toFormat)

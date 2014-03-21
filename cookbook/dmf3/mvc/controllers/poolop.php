@@ -19,16 +19,49 @@ class PoolOp extends K_Controller {
         $this->returnJson(0, "操作成功完成", "");
 	}
 	
-	
-	public function downloadxml($group, $poolId) // GET : format attach split
+	// GET : format attach split
+	public function downloadxml($group, $poolId)
 	{
-        return '<i/>';
+        $format = CommentFormat::fromString(
+                    basename($this->Input->Get->format) );
+        $attach = basename($this->Input->Get->attach) == "true";
+        $splitSize  = intval($this->Input->Get->split);
+        
+        if ($format === FALSE) {
+            throw new Exception("未知目标格式", -1);
+        }
+        
+        $pool = new CommentPool($group, $poolId);
+        
+        if ($splitSize) {
+            //分段
+        } else {
+            //不分段
+            die(XMLConverter::FromInternalFormat($pool->GetXMLObj,
+                                                    $format));
+        }
 	}
 	
 	//TODO:
-	public function post($group, $poolId) // GET : pool append
+	public function post($group, $poolId) //GET : pool append
 	{
-        $this->returnJson(-1, "未实现", "");
+        $pool = InternalPoolType::fromString(
+                    basename($this->Input->Get->pool));
+        $append  = intval($this->Input->Get->append);
+        
+        if ($pool === InternalPoolType::All) {
+            throw new Exception("非法弹幕池", -1);
+        }
+        
+        $pool = new CommentPool($group, $poolId);
+        
+        if ($splitSize) {
+            //分段
+        } else {
+            //不分段
+            die(XMLConverter::FromInternalFormat($pool->GetXMLObj,
+                                                    $format));
+        }
 	}
 	
     //TODO:
@@ -77,9 +110,10 @@ class PoolOp extends K_Controller {
 	{
         $arr = array(
             'code'      => $code,
-            'errormsg'  => $errormsg,
-            'msg'       => $msg);
-        die(json_encode($arr, JSON_FORCE_OBJECT);
+            'errormsg'  => nl2br($errormsg, true),
+            'msg'       => nl2br($msg, true));
+            
+        die(json_encode($arr, JSON_FORCE_OBJECT));
 	}
 	
 }

@@ -1,25 +1,22 @@
-<?php if (!defined('PmWiki')) exit();
+<?php
+
+if (!defined('PmWiki'))
+    exit();
 //页面加载
-Markup_e("PlayerPageLoader", 'fulltext',
-    '/DMFPLAYERDATA_(.+)_DMFPLAYERDATA/ms',
+Markup_e("PlayerPageLoader", 'fulltext', '/DMFPLAYERDATA_(.+)_DMFPLAYERDATA/ms',
     'DMF_PlayerPageLoader($m[1])');
 
-function DMF_PlayerPageLoader($jsonText) {
+function DMF_PlayerPageLoader($jsonText)
+{
     global $pagename;
     $json = json_decode($jsonText, true);
-    
-    if ($json === null) 
+
+    if ($json === null)
         return Keep("json解码失败，请手动修正错误");
-        
-        
-    $partidx =
-        array_key_exists('part', $_GET)
-        ? intval($_GET['part'])
-        : null;
-    $uplayer =
-        array_key_exists('player', $_GET)
-        ? strval($_GET['player'])
-        : null;
+
+
+    $partidx = array_key_exists('part', $_GET) ? intval($_GET['part']) : null;
+    $uplayer = array_key_exists('player', $_GET) ? strval($_GET['player']) : null;
     $config = new VideoInfo($json, $pagename, $uplayer, $partidx);
     $info = LoaderGenerateConfig($config);
     return Keep($info->ToString());
@@ -30,11 +27,11 @@ function DMF_PlayerPageLoader($jsonText) {
 function LoaderGenerateConfig(VideoInfo $videocfg)
 {
     $pagename = $videocfg->pagename;
-    $group    = $videocfg->group;
-    $gcfg     = GroupConfigManager::Get($group);
-        
-    $xtpl = new XTemplateHelper(DMF_ROOT_PATH.'/res/playpage.tmpl');
-    
+    $group = $videocfg->group;
+    $gcfg = GroupConfigManager::Get($group);
+
+    $xtpl = new XTemplateHelper(DMF_ROOT_PATH . '/res/playpage.tmpl');
+
     //来源
     if (DMFConfig::LocalVersion) {
         $xtpl->SetNull('main.source');
@@ -43,77 +40,74 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
     }
 
     //显示tag
-    //以后再改 
-    $xtpl->Assign('TAGS',strip_tags(MarkupToHTML($pagename, '(:includeTag:)'), "<a>") );
+    //以后再改
+    $xtpl->Assign('TAGS', strip_tags(MarkupToHTML($pagename, '(:includeTag:)'),
+        "<a>"));
     if (CondAuth($pagename, 'edit')) {
         $xtpl->Parse("main.tagListEditable");
     } else {
         $xtpl->Parse("main.tagListNormal");
     }
     //弹幕池权限提醒
-     if (DMFConfig::LocalVersion && !CommentPoolStorage::CanWrite($group, $poolId)) {
+    if (DMFConfig::LocalVersion && !CommentPoolStorage::CanWrite($group, $poolId)) {
         $GLOBALS['MessagesFmt'][] =
-            '<div style="color:#ff0000;font-size:x-small;font-weight:bold;">没有弹幕池写入权限，相关功能已禁用<br />'.
+            '<div style="color:#ff0000;font-size:x-small;font-weight:bold;">没有弹幕池写入权限，相关功能已禁用<br />' .
             '请登录或输入弹幕池密码</div>';
-     }
+    }
 
     //调试信息
-    $GLOBALS['MessagesFmt'][] = 
-        sprintf("%s -> %s(%s)",
-            $videocfg->GetCurrentPlayer()->desc,
-            $videocfg->videotype,
-            $videocfg->GetCmtId());
-    $xtpl->Parse("main.messages", array('MESSAGES' => MarkupToHTML($pagename, "(:messages:)")));
+    $GLOBALS['MessagesFmt'][] = sprintf("%s -> %s(%s)", $videocfg->GetCurrentPlayer
+        ()->desc, $videocfg->videotype, $videocfg->GetCmtId());
+    $xtpl->Parse("main.messages", array('MESSAGES' => MarkupToHTML($pagename,
+            "(:messages:)")));
 
 
     //调用播放器
     $player = $videocfg->GetCurrentPlayer();
     $playerParams = $gcfg->GenerateFlashVarArr($videocfg)->ToArray();
     foreach ($playerParams as $name => $value) {
-        $xtpl->Parse("main.FlashVars", array('FLASHVARS' => array("Name" => $name, "Value" => $value)));
+        $xtpl->Parse("main.FlashVars", array('FLASHVARS' => array("Name" => $name,
+                    "Value" => $value)));
     }
     $xtpl->Parse("main.PlayerLoader", array(
-        "URL"    => $player->url,
+        "URL" => $player->url,
         "HEIGHT" => $player->height,
-        "WIDTH"  => $player->width));
+        "WIDTH" => $player->width));
 
 
     //播放器选择
     $pinfo = $videocfg->GetPlayerInfo();
-    $xtpl->Parse('main.PlayerLoaderCurrent',
-            array('NAME' => $pinfo['current']->desc));
+    $xtpl->Parse('main.PlayerLoaderCurrent', array('NAME' => $pinfo['current']->
+            desc));
 
     $isAdmin = CondAuth($pagename, 'admin');
     foreach ($pinfo['others'] as $id => $player) {
         $arr = array(
             'Name' => $player->desc,
-            'URL'  => $player->url,
+            'URL' => $player->url,
             'SetDefaultUrl' => "?Player={$id}?&action=setdef");
-       $xtpl->Parse(
-                ($isAdmin)
-                    ? "main.PlayerLoaderAdmin"
-                    : "main.PlayerLoaderNormal",
-                array('PLAYER' => $arr));
+        $xtpl->Parse(($isAdmin) ? "main.PlayerLoaderAdmin" : "main.PlayerLoaderNormal",
+            array('PLAYER' => $arr));
     }
 
     //分P信息
-    $partText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#partinfo#partend'));
-    $linkedPartText = preg_replace(
-            "|<dt>P([0-9]+)</dt>|",
-            "<dt><a class='urllink' href='?Part=$1'>P$1</a></dt>",
-            $partText);
+    $partText = MarkupToHTML($pagename, RetrieveAuthSection($pagename,
+        '#partinfo#partend'));
+    $linkedPartText = preg_replace("|<dt>P([0-9]+)</dt>|",
+        "<dt><a class='urllink' href='?Part=$1'>P$1</a></dt>", $partText);
     if (!empty($linkedPartText)) {
         $xtpl->Parse("main.PARTDATA", array('PARTTEXT' => $linkedPartText));
     }
 
     //评论&描述
-    $descText = MarkupToHTML($pagename, RetrieveAuthSection($pagename, '#comment#commentend'));
+    $descText = MarkupToHTML($pagename, RetrieveAuthSection($pagename,
+        '#comment#commentend'));
     $xtpl->Parse("main.DESC", array('DESCTEXT' => $descText));
 
     //弹幕控制
-    $xtpl->Assign('GROUP'      , $gcfg->GetGroupName());
-    $xtpl->Assign('DANMAKUID'  , $videocfg->GetCmtId());
-    $xtpl->Assign('SUID'       , $gcfg->GetPoolPageNamePrefix()   );
+    $xtpl->Assign('GROUP', $gcfg->GetGroupName());
+    $xtpl->Assign('DANMAKUID', $videocfg->GetCmtId());
+    $xtpl->Assign('SUID', $gcfg->GetPoolPageNamePrefix());
     $xtpl->Parse("main.DanmakuBar.Script");
     //下载
     foreach ($gcfg->GetCommentFormats() as $format) {
@@ -129,7 +123,8 @@ function LoaderGenerateConfig(VideoInfo $videocfg)
         $xtpl->Parse("main.DanmakuBar.NewLine");
         $xtpl->Parse("main.DanmakuBar.Upload");
         $xtpl->Parse("main.DanmakuBar.DynamicPool");
-        if ($videocfg->IsMultiPart()) $xtpl->Parse("main.DanmakuBar.PageOperation");
+        if ($videocfg->IsMultiPart())
+            $xtpl->Parse("main.DanmakuBar.PageOperation");
         $xtpl->Parse("main.DanmakuBar.PoolOperation");
     }
     $xtpl->Parse("main.DanmakuBar");

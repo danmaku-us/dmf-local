@@ -39,6 +39,7 @@ class PoolOp extends K_Controller {
             //不分段
             die(XMLConverter::FromInternalFormat($pool->GetXMLObj,
                                                     $format));
+            
         }
 	}
 	
@@ -49,15 +50,16 @@ class PoolOp extends K_Controller {
             throw new Exception("无权写入", -1);
         }
         
-        if ($this->Input->File->uploadfile['error'] != UPLOAD_ERR_OK) {
+        if ($this->Input->File->CmtFile['error'] != UPLOAD_ERR_OK) {
             throw new Exception("文件上传失败", -1);
         }
         
         $obj = simplexml_load_file(
-                    $this->Input->File->uploadfile['tmp_name']);
+                    $this->Input->File->CmtFile['tmp_name']);
         if ($obj === FALSE) {
             throw new Exception("XML文件非法", -1);
         }
+        $obj = XMLConverter::ToInternalFormat($obj);
         $pool = InternalPoolType::fromString(
                     basename($this->Input->Get->pool));
         $append  = intval($this->Input->Get->append);
@@ -66,15 +68,10 @@ class PoolOp extends K_Controller {
             throw new Exception("非法弹幕池", -1);
         }
         
-        $pool = new CommentPool($group, $poolId);
-        
-        if ($splitSize) {
-            //分段
-        } else {
-            //不分段
-            die(XMLConverter::FromInternalFormat($pool->GetXMLObj,
-                                                    $format));
-        }
+        $cmtpool = new CommentPool($group, $poolId);
+        $cmtpool->Import($obj);
+        $cmtpool->Save(true);
+
 	}
 	
     //TODO:

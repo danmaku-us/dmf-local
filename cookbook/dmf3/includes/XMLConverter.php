@@ -21,8 +21,8 @@ abstract class XMLConverter {
 
     private static function GetXSLObj($fromFormat, $toFormat)
     {
-            $from = self::getName($fromFormat);
-            $to   = self::getName($toFormat);
+            $from = CommentFormat::fromString($fromFormat);
+            $to   = CommentFormat::fromString($toFormat);
 
             if ($from == 'dmf') {
                 $file = DMF_ROOT_PATH."/res/xml_{$to}_from_dmf.xsl";

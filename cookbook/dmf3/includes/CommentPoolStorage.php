@@ -1,45 +1,47 @@
-<?php if (!defined('PmWiki')) exit();
+<?php
+
+if (!defined('PmWiki'))
+    exit();
 //用于从不同的储存路径读取数据
 
 abstract class CommentPoolStorage
 {
     const XMLHeader = '<?xml version="1.0" encoding="utf-8"?><DMFCmtPool version="0">';
     const XMLFooter = '</DMFCmtPool>';
-    const XMLEmpty  = '<DMFCmtPool />';
-    
+    const XMLEmpty = '<DMFCmtPool />';
+
     protected $group;
     protected $poolId;
-    
+
     protected function __construct($group, $poolId)
     {
         $this->group = $group;
-        $this->poolId= $poolId;
+        $this->poolId = $poolId;
     }
-    
+
     abstract public function Get();
     abstract public function Put(SimpleXMLElement $xmlObj, $genHistory = true);
-    
+
     public static function CanRead($group, $poolId)
     {
         $pn = PagedPoolStorage::GetPageName($group, $poolId);
         return CondAuth($pn, 'read');
     }
-    
+
     public static function CanWrite($group, $poolId)
     {
         $pn = PagedPoolStorage::GetPageName($group, $poolId);
         return CondAuth($pn, 'edit');
     }
-    
+
     public static function GetEmptyObj()
     {
         return simplexml_load_string(self::XMLHeader . self::XMLFooter);
     }
-    
+
     protected static function GetErrorObj($errmsg)
     {
-        $errorXML = 
-            self::XMLHeader.
+        $errorXML = self::XMLHeader .
             '<comment cmtid="-1" poolid="-1" sendtime="-1" user="-1" >
                 <text>弹幕池加载失败，请验证弹幕池。</text>
                 <playtime>0</playtime>
@@ -47,11 +49,10 @@ abstract class CommentPoolStorage
                 <fontsize>50</fontsize>
                 <color>0</fontsize>
                 <attr/>
-            </comment>'.
-            self::XMLFooter;
+            </comment>' . self::XMLFooter;
         return simplexml_load_string($errorXML);
     }
-    
+
     public static function GetStorage($group, $poolId, $type)
     {
         switch ($type) {
@@ -73,27 +74,28 @@ final class CachedPoolStorage extends CommentPoolStorage
         parent::__construct($group, $poolId);
         $this->filePath = $this->GetCahceFilePath();
     }
-    
-	private function GetCahceFilePath() {
-        $folder = DMFConfig::CMT_CacheDir."/{$this->group}";
+
+    private function GetCahceFilePath()
+    {
+        $folder = DMFConfig::CMT_CacheDir . "/{$this->group}";
         if (!file_exists($folder)) {
             var_dump($folder);
             mkdir($folder);
             exit;
         }
-        
-        return DMFConfig::CMT_CacheDir."/{$this->group}/{$this->poolId}";
-	}
-	
+
+        return DMFConfig::CMT_CacheDir . "/{$this->group}/{$this->poolId}";
+    }
+
     public function Get()
     {
         if (!file_exists($this->filePath)) {
-            return FALSE;
+            return false;
         }
 
         return simplexml_load_file($this->filePath);
     }
-    
+
     public function Put(SimpleXMLElement $xmlObj, $genHistory = true)
     {
         //TODO:如果文件夹不存在还要创建
@@ -114,57 +116,59 @@ final class PagedPoolStorage extends CommentPoolStorage
         $this->pagename = self::GetPageName($group, $poolId);
     }
 
-	public static function GetPageName($group, $poolId) {
+    public static function GetPageName($group, $poolId)
+    {
         $gcfg = GroupConfigManager::Get($group);
-        
+
         $prefix = $gcfg->GetPoolPageNamePrefix();
-        return DMFConfig::CMT_PageGroup.".{$prefix}{$poolId}";
-	}
+        return DMFConfig::CMT_PageGroup . ".{$prefix}{$poolId}";
+    }
 
     public function Get()
     {
-        $page = RetrieveAuthPage($this->pagename, DMFConfig::CMT_PoolReadAuth, FALSE, READPAGE_CURRENT);
-        $dyn  = $page['text'];
-        $static= $page['staticpool'];
-        $xmlobj = simplexml_load_string(self::XMLHeader.$static.$dyn.self::XMLFooter);
-        if ($xmlobj !== FALSE) {
+        $page = RetrieveAuthPage($this->pagename, DMFConfig::CMT_PoolReadAuth, false,
+            READPAGE_CURRENT);
+        $dyn = $page['text'];
+        $static = $page['staticpool'];
+        $xmlobj = simplexml_load_string(self::XMLHeader . $static . $dyn . self::
+            XMLFooter);
+        if ($xmlobj !== false) {
             return array(true, $xmlobj);
         } else {
             $errors = XMLHelper::GetErrors();
             FB::Error("{$this->pagename}XML格式非法");
-            return array(false,
-                    CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法.{$errors}"));
+            return array(false, CommentPoolStorage::GetErrorObj("{$this->pagename}XML格式非法.{$errors}"));
         }
     }
-    
+
     public function Put(SimpleXMLElement $xmlObj, $genHistory = true)
     {
-        $old = $new = RetrieveAuthPage($this->pagename, 
-                    DMFConfig::CMT_PoolReadAuth, FALSE, READPAGE_CURRENT);
+        $old = $new = RetrieveAuthPage($this->pagename, DMFConfig::CMT_PoolReadAuth, false,
+            READPAGE_CURRENT);
         $new['text'] = "";
         $new['staticpool'] = "";
-        
+
         foreach ($xmlObj->comment as $node) {
-            if ( (string) $node["pooltype"] == InternalPoolType::StaId ) {
+            if ((string )$node["pooltype"] == InternalPoolType::StaId) {
                 $new['staticpool'] .= $node->asXML();
             } else {
                 $new['text'] .= $node->asXML();
             }
         }
-        
+
         if ($genHistory) {
             $ret = UpdatePage($this->pagename, $old, $new);
         } else {
             WritePage($this->pagename, $new);
             $ret = true; // WritePage没有返回码
         }
-        
+
         if ($ret) {
             FB::info("{$this->pagename} 写入成功");
         } else {
             FB::error("{$this->pagename} 写入失败");
         }
-        
+
         return $ret;
     }
 }

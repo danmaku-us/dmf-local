@@ -56,3 +56,4 @@ if ($action == "browse") {
     }
     unset($DMF_g, $DMF_config, $DMF_jsfp);
 }
+

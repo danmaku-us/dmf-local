@@ -92,7 +92,7 @@ final class CommentPool
         $domB = dom_import_simplexml($obj);
         
         $domA->importNode($domB);
-        $this->xmlobj = simplexml_import_dom($domA):
+        $this->xmlobj = simplexml_import_dom($domA);
         
 	}
 	

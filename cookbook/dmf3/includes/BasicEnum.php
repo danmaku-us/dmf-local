@@ -5,7 +5,7 @@ abstract class BasicEnum {
     private static function getConstants() {
         if (self::$constCache === NULL) {
             $reflect = new ReflectionClass(get_called_class());
-            self::$constCache = $reflect-getConstants();
+            self::$constCache = $reflect->getConstants();
         }
 
         return self::$constCache;
